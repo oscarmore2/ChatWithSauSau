@@ -616,7 +616,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
             final Groups groups = (Groups) obj;
 
             if (groups.getCode() == 200) {
-                List<Group> grouplist = new ArrayList<>();
+                List<Group> grouplist = new ArrayList<Group>();
                 if (groups.getResult() != null) {
                     for (int i = 0; i < groups.getResult().size(); i++) {
 

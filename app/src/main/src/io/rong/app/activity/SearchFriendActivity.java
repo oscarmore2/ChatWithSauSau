@@ -53,7 +53,7 @@ public class SearchFriendActivity extends BaseApiActivity implements View.OnClic
         mEtSearch = (EditText) findViewById(R.id.de_ui_search);
         mBtSearch = (Button) findViewById(R.id.de_search);
         mListSearch = (ListView) findViewById(R.id.de_search_list);
-        mResultList = new ArrayList<>();
+        mResultList = new ArrayList<ApiResult>();
         mDialog = new LoadingDialog(this);
 
     }

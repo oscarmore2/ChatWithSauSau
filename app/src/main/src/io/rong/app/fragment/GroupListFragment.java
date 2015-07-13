@@ -81,7 +81,7 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
     }
 
     private void initData() {
-        mResultList = new ArrayList<>();
+        mResultList = new ArrayList<ApiResult>();
 
         if (DemoContext.getInstance() != null) {
             mGroupMap = DemoContext.getInstance().getGroupMap();

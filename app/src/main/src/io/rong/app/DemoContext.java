@@ -151,7 +151,7 @@ public class DemoContext {
     }
     public  void insertOrReplaceUserInfoList(ArrayList<UserInfo> list,String status){
 
-        List<UserInfos> userInfos = new ArrayList<>();
+        List<UserInfos> userInfos = new ArrayList<UserInfos>();
 
 
 
@@ -180,7 +180,7 @@ public class DemoContext {
      * @return
      */
     public ArrayList<UserInfo> getFriendList() {
-        List<UserInfo> userInfoList = new ArrayList<>();
+        List<UserInfo> userInfoList = new ArrayList<UserInfo>();
 
         List<UserInfos> userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Status.eq("5")).list();
 
@@ -202,8 +202,8 @@ public class DemoContext {
      */
     public ArrayList<UserInfo> getUserInfoList(String[] userIds) {
 
-        List<UserInfo> userInfoList = new ArrayList<>();
-        List<UserInfos> userInfosList = new ArrayList<>();
+        List<UserInfo> userInfoList = new ArrayList<UserInfo>();
+        List<UserInfos> userInfosList = new ArrayList<UserInfos>();
 
         for (int i = 0; i < userIds.length; i++) {
             UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userIds[i])).unique();
@@ -216,7 +216,7 @@ public class DemoContext {
             return null;
 
 
-        return (ArrayList) userInfoList;
+        return (ArrayList<UserInfo>) userInfoList;
     }
 
     /**

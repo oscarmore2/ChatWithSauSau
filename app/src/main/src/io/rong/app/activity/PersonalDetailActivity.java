@@ -73,7 +73,7 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
         mPersonalsignature = (TextView) findViewById(R.id.personal_signature);
         mSendMessage = (Button) findViewById(R.id.send_message);
         mSendVoip = (Button) findViewById(R.id.send_voip);
-        mUserInfoList = new ArrayList<>();
+        mUserInfoList = new ArrayList<UserInfo>();
         mDialog = new LoadingDialog(this);
     }
 

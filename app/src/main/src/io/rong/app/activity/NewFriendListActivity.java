@@ -61,7 +61,7 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.de_actionbar_back);
         mNewFriendList = (ListView) findViewById(R.id.de_new_friend_list);
         mDialog = new LoadingDialog(this);
-        mResultList = new ArrayList<>();
+        mResultList = new ArrayList<ApiResult>();
         mHandler = new Handler(this);
 
         if (DemoContext.getInstance() != null) {

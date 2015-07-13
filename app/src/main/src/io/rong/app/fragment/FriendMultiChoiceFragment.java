@@ -104,7 +104,7 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        setMultiChoice(true, new ArrayList<>(mMemberIds));
+        setMultiChoice(true, new ArrayList<String>(mMemberIds));
 
         selectButton = (Button) view.findViewById(R.id.send_message_friend);
         ImageView tilefinish = (ImageView) view.findViewById(R.id.send_message_finish);

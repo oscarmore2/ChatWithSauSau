@@ -127,7 +127,7 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
         }
 
         if (isFromSetting) {
-            mHaveSelectedItemIds = new ArrayList<>();
+            mHaveSelectedItemIds = new ArrayList<String>();
             if (mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
                 mSelectedItemIds.add(mTargetId);
 

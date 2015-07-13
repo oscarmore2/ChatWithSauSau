@@ -46,7 +46,7 @@ public class GroupListAdapter extends BaseAdapter  {
         mLayoutInflater = LayoutInflater.from(context);
         mContext = context;
         this.groupMap = group;
-        mViewList = new ArrayList<>();
+        mViewList = new ArrayList<View>();
 
 
     }
