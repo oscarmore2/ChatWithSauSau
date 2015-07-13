@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.rong.app.R;
 import io.rong.imkit.model.ProviderTag;
 import io.rong.imkit.widget.provider.IContainerItemProvider;
 import io.rong.imlib.model.Message;
@@ -50,9 +51,9 @@ public  class DeContactNotificationMessageProvider extends IContainerItemProvide
 
     @Override
     public View newView(Context context, ViewGroup group) {
-        View view = LayoutInflater.from(context).inflate(io.rong.imkit.R.layout.rc_item_information_notification_message, group,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.de_item_information_notification_message, group,false);
         ViewHolder viewHolder = new ViewHolder();
-        viewHolder.contentTextView = (TextView) view.findViewById(io.rong.imkit.R.id.rc_msg);
+        viewHolder.contentTextView = (TextView) view.findViewById(R.id.rc_msg);
         viewHolder.contentTextView.setMovementMethod(LinkMovementMethod.getInstance());
         view.setTag(viewHolder);
 

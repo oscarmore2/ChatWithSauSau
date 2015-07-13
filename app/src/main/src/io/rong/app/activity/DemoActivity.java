@@ -433,6 +433,11 @@ public class DemoActivity extends BaseActivity implements Handler.Callback {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.de_conversation_menu, menu);
+
+        if(mConversationType!=null &&mConversationType == Conversation.ConversationType.CHATROOM){
+            menu.getItem(0).setVisible(false);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -445,7 +450,8 @@ public class DemoActivity extends BaseActivity implements Handler.Callback {
                 }
                 if (mConversationType == Conversation.ConversationType.PUBLIC_SERVICE || mConversationType == Conversation.ConversationType.APP_PUBLIC_SERVICE) {
                     RongIM.getInstance().startPublicServiceProfile(this, mConversationType, targetId);
-                } else {
+                }
+                else {
                     //通过targetId 和 会话类型 打开指定的设置页面
                     if (!TextUtils.isEmpty(targetId)) {
                         Uri uri = Uri.parse("demo://" + getApplicationInfo().packageName).buildUpon().appendPath("conversationSetting")

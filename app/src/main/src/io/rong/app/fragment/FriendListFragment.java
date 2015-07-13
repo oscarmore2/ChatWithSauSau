@@ -131,7 +131,18 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
             if (mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
                 mSelectedItemIds.add(mTargetId);
 
-                mHaveSelectedItemIds.add(mTargetId);
+                if(mTargetId!=null && isMultiChoice){
+                    for (Friend friend : mFriendsList) {
+                        if(mTargetId.equals(friend.getUserId())){
+                            friend.setSelected(true);
+                            break;
+                        }
+                    }
+                }
+                mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(getActivity(), mFriendsList, mSelectedItemIds) : new FriendListAdapter(getActivity(), mFriendsList);
+                mListView.setAdapter(mAdapter);
+                fillData();
+
             } else if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
                 if (RongIM.getInstance() != null && RongIM.getInstance().getRongIMClient() != null)
                     RongIM.getInstance().getRongIMClient().getDiscussion(mTargetId, new RongIMClient.ResultCallback<Discussion>() {
@@ -142,8 +153,21 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
                             ArrayList<String> lists = (ArrayList<String>) discussion.getMemberIdList();
                             for (int i = 0; i < lists.size(); i++) {
                                 mSelectedItemIds.add(lists.get(i));
-                                mHaveSelectedItemIds.add(lists.get(i));
                             }
+
+                            if (mSelectedItemIds != null && isMultiChoice) {
+                                for (String id : mSelectedItemIds) {
+                                    for (Friend friend : mFriendsList) {
+                                        if (id.equals(friend.getUserId())) {
+                                            friend.setSelected(true);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(getActivity(), mFriendsList, mSelectedItemIds) : new FriendListAdapter(getActivity(), mFriendsList);
+                            mListView.setAdapter(mAdapter);
+                            fillData();
                         }
 
                         @Override
@@ -152,13 +176,12 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
                         }
                     });
             }
-            mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(this.getActivity(), mFriendsList, mSelectedItemIds,mHaveSelectedItemIds, true) : new FriendListAdapter(this.getActivity(), mFriendsList,mHaveSelectedItemIds,true);
-        } else {
-            mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(this.getActivity(), mFriendsList, mSelectedItemIds,null, false) : new FriendListAdapter(this.getActivity(), mFriendsList,null,false);
-        }
 
-        mListView.setAdapter(mAdapter);
-        fillData();
+        } else {
+            mAdapter = isMultiChoice ? new FriendMultiChoiceAdapter(this.getActivity(), mFriendsList, mSelectedItemIds) : new FriendListAdapter(this.getActivity(), mFriendsList);
+            mListView.setAdapter(mAdapter);
+            fillData();
+        }
 
         super.onViewCreated(view, savedInstanceState);
     }

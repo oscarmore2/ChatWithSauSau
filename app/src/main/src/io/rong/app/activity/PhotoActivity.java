@@ -39,7 +39,7 @@ public class PhotoActivity extends BaseActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.save) {
+        if(item.getItemId() == R.id.icon) {
             if(mDownloaded == null) {
                 Toast.makeText(this, "正在下载，请稍后保存！", Toast.LENGTH_SHORT).show();
                 return true;
@@ -91,7 +91,7 @@ public class PhotoActivity extends BaseActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if(mUri != null && mUri.getScheme().startsWith("http")) {
             MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.de_photo_menu, menu);
+            inflater.inflate(R.menu.de_fix_username, menu);
             return super.onCreateOptionsMenu(menu);
         } else {
             return super.onCreateOptionsMenu(menu);
@@ -100,6 +100,7 @@ public class PhotoActivity extends BaseActionBarActivity {
 
     protected void initView() {
         mPhotoFragment = (PhotoFragment) getSupportFragmentManager().getFragments().get(0);
+
     }
 
     protected void initData() {

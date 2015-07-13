@@ -21,8 +21,10 @@ import io.rong.app.R;
 import io.rong.app.model.Friend;
 import io.rong.app.model.FriendSectionIndexer;
 import io.rong.app.ui.DePinnedHeaderAdapter;
+
 import com.sea_monster.resource.Resource;
-import io.rong.imkit.widget.AsyncImageView ;
+
+import io.rong.imkit.widget.AsyncImageView;
 
 @SuppressLint("UseSparseArrays")
 public class ContactsAdapter extends DePinnedHeaderAdapter<Friend> implements Filterable {
@@ -55,34 +57,24 @@ public class ContactsAdapter extends DePinnedHeaderAdapter<Friend> implements Fi
             key = friend.getSearchKey();
 
             if (hashMap.containsKey(key)) {
-//                Log.e("bob", "bob----hashMap.containsKey(key) == true---" + friend.getNickname() + "------" + key);
                 int position = (Integer) hashMap.get(key);
                 if (position <= result.size() - 1) {
                     result.get(position).add(friend);
                 }
-            }
-//            else if(){
-//
-//            }
-            else {
-//                Log.e("bob", "bob----hashMap.containsKey(key) == false---" + friend.getNickname() + "------" + key);
+            } else {
                 result.add(new ArrayList<Friend>());
                 int length = result.size() - 1;
                 result.get(length).add(friend);
                 hashMap.put(key, length);
             }
         }
-//        if(key == 0){
-//            DePinnedHeaderAdapter.setAddressListShow(0);
-//        }
-
         updateCollection(result);
 
     }
 
     @Override
     protected View newView(Context context, int partition, List<Friend> data, int position, ViewGroup parent) {
-        View view = mInflater.inflate(R.layout.de_item_addresslist, parent,false);
+        View view = mInflater.inflate(R.layout.de_item_addresslist, parent, false);
         ViewHolder holder = new ViewHolder();
         newSetTag(view, holder, position, data);
         view.setTag(holder);
@@ -112,7 +104,7 @@ public class ContactsAdapter extends DePinnedHeaderAdapter<Friend> implements Fi
 
     @Override
     protected View newHeaderView(Context context, int partition, List<Friend> data, ViewGroup parent) {
-        View view = mInflater.inflate(R.layout.de_item_friend_index, parent,false);
+        View view = mInflater.inflate(R.layout.de_item_friend_index, parent, false);
         view.setTag(view.findViewById(R.id.index));
         return view;
     }
@@ -163,23 +155,14 @@ public class ContactsAdapter extends DePinnedHeaderAdapter<Friend> implements Fi
         }
 
         int section = getSectionForPosition(position);
-        Log.e("","0411---------configurePinnedHeader----section:"+section);
 //TODO
         if (section != -1) {
-            if(section == 0){
+            if (section == 0) {
                 cache.titleView.setText("★");
-//                cache.titleView.setHeight(0);
-//                cache.titleView.setVisibility(View.GONE);
-            }else if(section > 0) {
+            } else if (section > 0) {
                 String title = (String) getSectionIndexer().getSections()[section];
                 cache.titleView.setText(title);
             }
-//            if (alpha == 255) {
-//                cache.titleView.setTextColor(cache.textColor);
-//            } else {
-//                int textColor = cache.textColor.getDefaultColor();
-//                cache.titleView.setTextColor(Color.argb(alpha, Color.red(textColor), Color.green(textColor), Color.blue(textColor)));
-//            }
         }
 
     }

@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sea_monster.resource.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import io.rong.app.R;
 import io.rong.app.activity.PersonalDetailActivity;
 import io.rong.app.model.Friend;
-import com.sea_monster.resource.Resource;
-import io.rong.imkit.widget.AsyncImageView ;
+import io.rong.imkit.widget.AsyncImageView;
 
 public class BlackMultiChoiceAdapter extends BlackListAdapter {
 
@@ -36,7 +38,7 @@ public class BlackMultiChoiceAdapter extends BlackListAdapter {
 
         Resource res = new Resource(friend.getPortrait());
 
-        photo.setDefaultDrawable(mContext.getResources().getDrawable(io.rong.imkit.R.drawable.rc_default_portrait));
+        photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_default_portrait));
                 photo.setResource(res);
 
         String userId = friend.getUserId();

@@ -6,9 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +80,6 @@ public class SettingFragment extends DispatchResultFragment implements View.OnCl
                 public void startSelectMember(Context context, Conversation.ConversationType conversationType, String id) {
                     if (targetId != null)
                         mConversationType = Conversation.ConversationType.valueOf(getActivity().getIntent().getData().getLastPathSegment().toUpperCase(Locale.getDefault()));
-
 
                     Intent in = new Intent(getActivity(), FriendListActivity.class);
                     in.putExtra("DEMO_FRIEND_TARGETID", id);

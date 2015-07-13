@@ -1,13 +1,14 @@
 package io.rong.app.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
+import android.os.Process;
 import android.support.v7.app.ActionBar;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -353,7 +354,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
             RongIM.connect(token, new RongIMClient.ConnectCallback() {
                         @Override
                         public void onTokenIncorrect() {
-
+                            Log.e("LoginActivity", "---------onTokenIncorrect userId----------:");
                         }
 
                         @Override
@@ -620,11 +621,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
             }
         }
         return super.onTouchEvent(event);
-
-
-
     }
-
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -640,7 +637,6 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
         return super.dispatchKeyEvent(event);
     }
 
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -649,7 +645,6 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
             mDialog = null;
         }
     }
-
 
     protected void onPause() {
         super.onPause();
