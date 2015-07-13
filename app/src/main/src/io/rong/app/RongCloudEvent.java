@@ -23,17 +23,10 @@ import io.rong.app.database.UserInfos;
 import io.rong.app.database.UserInfosDao;
 import io.rong.app.message.DeAgreedFriendRequestMessage;
 import io.rong.app.model.User;
-import io.rong.app.provider.ContactsProvider;
-import io.rong.app.provider.InputTestProvider;
 import io.rong.imkit.PushNotificationManager;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.model.UIConversation;
-import io.rong.imkit.widget.provider.CameraInputProvider;
-import io.rong.imkit.widget.provider.ImageInputProvider;
-import io.rong.imkit.widget.provider.InputProvider;
-import io.rong.imkit.widget.provider.LocationInputProvider;
-import io.rong.imkit.widget.provider.VoIPInputProvider;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
@@ -302,7 +295,22 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
      * @param message 消息。
      */
     @Override
-    public void onSent(Message message) {
+    public boolean onSent(Message message, RongIM.SentMessageErrorCode sentMessageErrorCode) {
+
+
+        if (message.getSentStatus() == Message.SentStatus.FAILED) {
+
+            if (sentMessageErrorCode == RongIM.SentMessageErrorCode.NOT_IN_CHATROOM) {//不在聊天室
+
+            } else if (sentMessageErrorCode == RongIM.SentMessageErrorCode.NOT_IN_DISCUSSION) {//不在讨论组
+
+            } else if (sentMessageErrorCode == RongIM.SentMessageErrorCode.NOT_IN_GROUP) {//不在群组
+
+            } else if (sentMessageErrorCode == RongIM.SentMessageErrorCode.REJECTED_BY_BLACKLIST) {//你在他的黑名单中
+
+            }
+        }
+
 
         MessageContent messageContent = message.getContent();
 
@@ -321,6 +329,7 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
         } else {
             Log.d(TAG, "onSent-其他消息，自己来判断处理");
         }
+        return false;
     }
 
     /**
