@@ -12,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+import com.sea_monster.network.ApiCallback;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +33,6 @@ import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
-import com.sea_monster.network.ApiCallback;
 
 /**
  * Created by Bob on 2015/3/26.
@@ -97,6 +98,17 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
                 }
             }
         } else if (mRequestFriendHttpRequest == request) {
+
+        }
+    }
+
+    @Override
+    public void onCallApiFailure(AbstractHttpRequest request, BaseException e) {
+        if (getFriendHttpRequest == request) {
+            if (mDialog != null)
+                mDialog.dismiss();
+            Log.e(TAG,"-----onCallApiFailure------e:"+e);
+            WinToast.toast(this, "获取失败");
         }
     }
 
@@ -123,29 +135,39 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
                                 mRequestFriendHttpRequest = DemoContext.getInstance().getDemoApi().processRequestFriend(mResultList.get(position).getId(), "1", new ApiCallback<Status>() {
                                     @Override
                                     public void onComplete(AbstractHttpRequest<Status> statusAbstractHttpRequest, Status status) {
-                                        ArrayList<UserInfo> friendreslist = new ArrayList<UserInfo>();
-                                        UserInfo info = new UserInfo(mResultList.get(position).getId(), mResultList.get(position).getUsername(), mResultList.get(position).getPortrait() == null ? null : Uri.parse(mResultList.get(position).getPortrait()));
-                                        if (DemoContext.getInstance() != null) {
-                                            friendreslist = DemoContext.getInstance().getFriendList();
-                                            friendreslist.add(info);
+                                        Log.e(TAG, "----mRequestFriendHttpRequest----onComplete---");
 
-//                                            DemoContext.getInstance().insertOrReplace(friendreslist);
+                                        ApiResult apiResult = mResultList.get(position);
+                                        apiResult.setStatus(1);
+                                        mResultList.set(position, mResultList.get(position));
 
-                                            ApiResult apiResult = mResultList.get(position);
-                                            apiResult.setStatus(1);
-                                            mResultList.set(position, mResultList.get(position));
-
-                                            Message mess = Message.obtain();
-                                            mess.obj = mResultList;
-                                            mess.what = 1;
-                                            mHandler.sendMessage(mess);
-                                        }
-                                        sendMessage(mResultList.get(position).getId());
+                                        Message mess = Message.obtain();
+                                        mess.obj = mResultList;
+                                        mess.what = 1;
+                                        mHandler.sendMessage(mess);
+                                        mHandler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                UserInfo info = new UserInfo(mResultList.get(position).getId(), mResultList.get(position).getUsername(), mResultList.get(position).getPortrait() == null ? null : Uri.parse(mResultList.get(position).getPortrait()));
+                                                if (DemoContext.getInstance() != null) {
+                                                    if (DemoContext.getInstance().hasUserId(mResultList.get(position).getId())) {
+                                                        DemoContext.getInstance().updateUserInfos(mResultList.get(position).getId(), "1");
+                                                    } else {
+                                                        DemoContext.getInstance().insertOrReplaceUserInfo(info, "1");
+                                                    }
+                                                }
+                                                sendMessage(mResultList.get(position).getId());
+                                            }
+                                        });
                                     }
 
                                     @Override
                                     public void onFailure(AbstractHttpRequest<Status> statusAbstractHttpRequest, BaseException e) {
-
+                                        if(mRequestFriendHttpRequest!=null&& mRequestFriendHttpRequest.equals(statusAbstractHttpRequest)){
+                                            Log.e(TAG,"----mRequestFriendHttpRequest----onFailure---"+e);
+//                                            if (mDialog != null)
+//                                                mDialog.dismiss();
+                                        }
                                     }
                                 });
                             }
@@ -164,17 +186,6 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
         }
     };
 
-
-    @Override
-    public void onCallApiFailure(AbstractHttpRequest request, BaseException e) {
-        if (getFriendHttpRequest == request) {
-            if (mDialog != null)
-                mDialog.dismiss();
-            WinToast.toast(this, "获取失败");
-        }
-    }
-
-
     /**
      * 添加好友成功后，向对方发送一条消息
      *
@@ -185,25 +196,25 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
         if (DemoContext.getInstance() != null) {
             //获取当前用户的 userid
             String userid = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USERID", "defalte");
-            UserInfo userInfo = DemoContext.getInstance().getUserInfoById(userid);
+            String username = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USER_NAME", "defalte");
+            String userportrait = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USER_PORTRAIT", "defalte");
+
+            UserInfo userInfo = new UserInfo(userid,username,Uri.parse(userportrait));
             //把用户信息设置到消息体中，直接发送给对方，可以不设置，非必选项
             message.setUserInfo(userInfo);
             if (RongIM.getInstance() != null) {
 
                 //发送一条添加成功的自定义消息，此条消息不会在ui上展示
-                RongIM.getInstance().getRongIMClient().sendMessage(Conversation.ConversationType.PRIVATE, id, message, null, new RongIMClient.SendMessageCallback() {
+                RongIM.getInstance().getRongIMClient().sendMessage(Conversation.ConversationType.PRIVATE, id, message, null,null, new RongIMClient.SendMessageCallback() {
                     @Override
                     public void onError(Integer messageId, RongIMClient.ErrorCode e) {
                         Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onError--");
-                        if (mDialog != null)
-                            mDialog.dismiss();
                     }
 
                     @Override
                     public void onSuccess(Integer integer) {
                         Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onSuccess--" + message.getMessage());
-                        if (mDialog != null)
-                            mDialog.dismiss();
+
                     }
                 });
             }
@@ -255,13 +266,10 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
                 Intent intent = new Intent(NewFriendListActivity.this, SearchFriendActivity.class);
                 startActivityForResult(intent, Constants.FRIENDLIST_REQUESTCODE);
                 break;
-
             case android.R.id.home:
                 finish();
-
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -271,6 +279,8 @@ public class NewFriendListActivity extends BaseApiActivity implements Handler.Ca
             case 1:
                 mResultList = (List<ApiResult>) msg.obj;
                 updateAdapter(mResultList);
+                if (mDialog != null)
+                    mDialog.dismiss();
                 break;
         }
         return false;

@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +36,6 @@ import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
-
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
 
 /**
  * Created by Bob on 2015/1/25.
@@ -72,7 +72,6 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
         return view;
     }
 
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mGroupListView.setOnItemClickListener(this);
@@ -82,15 +81,11 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
 
     private void initData() {
         mResultList = new ArrayList<ApiResult>();
-
         if (DemoContext.getInstance() != null) {
             mGroupMap = DemoContext.getInstance().getGroupMap();
             mGetAllGroupsRequest = DemoContext.getInstance().getDemoApi().getAllGroups(this);
         }
-
-
     }
-
 
     private class UpdateGroupBroadcastReciver extends BroadcastReceiver {
 
@@ -99,7 +94,6 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
 
             if (intent.getAction().equals(MainActivity.ACTION_DMEO_GROUP_MESSAGE)) {
                 initData();
-                Log.e(TAG, "---push----UpdateGroupBroadcastReciver---");
             }
         }
     }
@@ -122,9 +116,15 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
                         @Override
                         public boolean onButtonClick(int position, View view) {
 
+                            if(mDemoGroupListAdapter == null)
+                                return false;
+
                             result = mDemoGroupListAdapter.getItem(position);
 
                             if (result == null)
+                                return false;
+
+                            if(mGroupMap == null)
                                 return false;
 
                             if (mGroupMap.containsKey(result.getId())) {
@@ -253,11 +253,7 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
     }
 
     private void updateAdapter() {
-        Log.e("", "------updateAdapter------");
         if (mDemoGroupListAdapter != null) {
-//            Intent intent = getActivity().getIntent();
-//            Bundle bundle = intent.getExtras();
-//            mGroupMap = (HashMap<String, Group>) bundle.get("result");
 
             mDemoGroupListAdapter = new GroupListAdapter(getActivity(), mResultList, mGroupMap);
             mGroupListView.setAdapter(mDemoGroupListAdapter);
@@ -265,7 +261,6 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
             mDemoGroupListAdapter.setOnItemButtonClick(new GroupListAdapter.OnItemButtonClick() {
                 @Override
                 public boolean onButtonClick(int position, View view) {
-
                     result = mDemoGroupListAdapter.getItem(position);
 
                     if (result == null)

@@ -2,7 +2,12 @@ package io.rong.app.common;
 
 import android.content.Context;
 
-import com.google.gson.reflect.TypeToken;
+import com.sea_monster.network.AbstractHttpRequest;
+import com.sea_monster.network.ApiCallback;
+import com.sea_monster.network.ApiReqeust;
+import com.sea_monster.network.AuthType;
+import com.sea_monster.network.BaseApi;
+import com.sea_monster.network.NetworkManager;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
@@ -20,14 +25,7 @@ import io.rong.app.model.Friends;
 import io.rong.app.model.Groups;
 import io.rong.app.model.Status;
 import io.rong.app.model.User;
-import io.rong.app.parser.GsonArrayParser;
 import io.rong.app.parser.GsonParser;
-import com.sea_monster.network.AbstractHttpRequest;
-import com.sea_monster.network.ApiCallback;
-import com.sea_monster.network.ApiReqeust;
-import com.sea_monster.network.AuthType;
-import com.sea_monster.network.BaseApi;
-import com.sea_monster.network.NetworkManager;
 
 /**
  * demo api 请求，需要设置cookie，否则会提示 “user not login”
@@ -36,6 +34,8 @@ import com.sea_monster.network.NetworkManager;
 public class DemoApi extends BaseApi {
     //        private static String HOST = "http://119.254.110.241:80/";
     private static String   HOST = "http://webim.demo.rong.io/";
+//    private static String   HOST = "http://119.254.110.114:7000/";
+
 
     private final static String DEMO_LOGIN_EMAIL = "email_login";
     private final static String DEMO_FRIENDS = "get_friend";
@@ -59,7 +59,6 @@ public class DemoApi extends BaseApi {
 
     public DemoApi(Context context) {
         super(NetworkManager.getInstance(), context);
-//        HOST = "http://webim.demo.rong.io/";
     }
 
 
@@ -82,7 +81,7 @@ public class DemoApi extends BaseApi {
 //        nameValuePairs.add(new BasicNameValuePair("env", "2"));
 
         ApiReqeust<User> apiReqeust = new DefaultApiReqeust<User>(ApiReqeust.POST_METHOD, URI.create(HOST + DEMO_LOGIN_EMAIL), nameValuePairs, callback);
-        AbstractHttpRequest<User> httpRequest = apiReqeust.obtainRequest(new GsonParser<User>(User.class), null, null);
+        AbstractHttpRequest<User> httpRequest = apiReqeust.obtainRequest(new GsonParser<User>(User.class), mAuthType);
         NetworkManager.getInstance().requestAsync(httpRequest);
         return httpRequest;
     }
@@ -127,7 +126,7 @@ public class DemoApi extends BaseApi {
         nameValuePairs.add(new BasicNameValuePair("username", username));
 
         ApiReqeust<Status> apiReqeust = new DefaultApiReqeust<Status>(ApiReqeust.POST_METHOD, URI.create(HOST + DEMO_UPDATE_PROFILE), nameValuePairs, callback);
-        AbstractHttpRequest<Status> httpRequest = apiReqeust.obtainRequest(new GsonParser<Status>(Status.class), null, null);
+        AbstractHttpRequest<Status> httpRequest = apiReqeust.obtainRequest(new GsonParser<Status>(Status.class), mAuthType);
         NetworkManager.getInstance().requestAsync(httpRequest);
 
         return httpRequest;

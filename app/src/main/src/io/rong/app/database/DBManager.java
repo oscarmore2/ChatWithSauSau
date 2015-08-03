@@ -5,7 +5,7 @@ import android.content.Context;
 public class DBManager {
 
     private static DBManager instance;
-    private DaoMaster daoMaster;
+    private io.rong.app.database.DaoMaster daoMaster;
     private DaoSession daoSession;
 
     public static DBManager getInstance(Context context) {
@@ -22,14 +22,14 @@ public class DBManager {
     private DBManager(Context context) {
         if (daoSession == null) {
             if (daoMaster == null) {
-                DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(context, context.getPackageName(), null);
-                daoMaster = new DaoMaster(helper.getWritableDatabase());
+                io.rong.app.database.DaoMaster.OpenHelper helper = new io.rong.app.database.DaoMaster.DevOpenHelper(context, context.getPackageName(), null);
+                daoMaster = new io.rong.app.database.DaoMaster(helper.getWritableDatabase());
             }
             daoSession = daoMaster.newSession();
         }
     }
 
-    public DaoMaster getDaoMaster() {
+    public io.rong.app.database.DaoMaster getDaoMaster() {
         return daoMaster;
     }
 

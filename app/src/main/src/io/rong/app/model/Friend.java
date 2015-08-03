@@ -2,10 +2,11 @@ package io.rong.app.model;
 
 import android.text.TextUtils;
 
+import com.sea_monster.resource.Resource;
+
 import java.io.Serializable;
 
 import io.rong.app.libs.pinyin.PinyinHelper;
-import com.sea_monster.resource.Resource;
 
 /**
  * Created by Bob on 2015/3/24.
@@ -129,5 +130,15 @@ public class Friend implements Serializable, IFilterModel {
         this.isAdd = isAdd;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        Friend friend = (Friend) obj;
+        if ((this.getUserId() == friend.getUserId()) && (this.getNickname() == friend.getNickname()) && (this.getPortrait() == friend.getPortrait())) {
+            return true;
+        }
+        return false;
+    }
 }

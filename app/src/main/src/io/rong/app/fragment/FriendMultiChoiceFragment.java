@@ -68,11 +68,9 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
 
             mConversationType = Conversation.ConversationType
                     .valueOf(uri.getLastPathSegment().toUpperCase(Locale.getDefault()));
-            Log.e(TAG,"-----selectPeopleComplete---mTargetId:"+mTargetId);
             if (TextUtils.isEmpty(mTargetId)) {
 
             } else {
-                Log.e(TAG,"-----selectPeopleComplete---mTargetffffId:"+mTargetId);
                 String[] ids = mTargetId.split(delimiter);
 
                 for (String item : Arrays.asList(ids)) {
@@ -88,17 +86,12 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
             String conversationType = intent.getStringExtra("DEMO_FRIEND_CONVERSATTIONTYPE").toUpperCase();
             mConversationType = Conversation.ConversationType.valueOf(conversationType);
             if (mConversationType.equals(Conversation.ConversationType.PRIVATE)) {
-              Conversation conversation =  RongIM.getInstance().getRongIMClient().getConversation(Conversation.ConversationType.PRIVATE,mTargetId);
-//                conversation.getTargetId();
+                Conversation conversation = RongIM.getInstance().getRongIMClient().getConversation(Conversation.ConversationType.PRIVATE, mTargetId);
                 mMemberIds.add(conversation.getTargetId());
-                mMemberIds.add(conversation.getSenderUserId());
             } else if (mConversationType.equals(Conversation.ConversationType.DISCUSSION)) {
 
             }
-
         }
-
-
         super.onCreate(savedInstanceState);
     }
 
@@ -217,12 +210,23 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
 
                 if (isFromSetting) {
 
-                    if (mMemberIds.size() == 2) {
-                        Log.e(TAG,"-----selectPeopleComplete---MemberIds.size():"+sb.toString());
-                        ids.addAll(mMemberIds);
-                        RongIM.getInstance().createDiscussionChat(getActivity(), ids, sb.toString());
-                        getActivity().finish();
-                    }else {
+                    if (mMemberIds.size() == 1) {
+                        Log.e(TAG, "-----selectPeopleComplete---MemberIds.size():" + sb.toString());
+                        if (RongIM.getInstance() != null)
+                            RongIM.getInstance().getRongIMClient().createDiscussion(sb.toString(), ids, new RongIMClient.CreateDiscussionCallback() {
+                                @Override
+                                public void onSuccess(String s) {
+                                    Log.e(TAG, "-----selectPeopleComplete---=＝onSuccess＝＝＝＝＋＋＋＋" + s);
+                                    getActivity().finish();
+                                }
+
+                                @Override
+                                public void onError(RongIMClient.ErrorCode e) {
+                                    Log.e(TAG, "-----selectPeopleComplete---=＝onError＝＝＝＝＋＋＋＋" + e);
+                                }
+                            });
+
+                    } else {
                         mLoadingDialog.show();
 
                         if (!TextUtils.isEmpty(mTargetId)) {
@@ -233,6 +237,7 @@ public class FriendMultiChoiceFragment extends FriendListFragment implements Han
                                     if (mLoadingDialog != null) {
                                         mLoadingDialog.dismiss();
                                     }
+                                    RongIM.getInstance().startDiscussionChat(getActivity(),mTargetId,"hello");
                                     getActivity().finish();
                                 }
 

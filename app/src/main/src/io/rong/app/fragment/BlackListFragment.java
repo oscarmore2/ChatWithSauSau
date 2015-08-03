@@ -1,9 +1,12 @@
 package io.rong.app.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +110,6 @@ public class BlackListFragment extends Fragment implements DeSwitchGroup.ItemHan
 
     private final void fillData() {
 
-//        mAdapter.removeAll();
         mAdapter.setAdapterData(mFriendsList);
         mAdapter.notifyDataSetChanged();
     }
@@ -139,8 +141,42 @@ public class BlackListFragment extends Fragment implements DeSwitchGroup.ItemHan
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Object tagObj = view.getTag();
         if (tagObj != null && tagObj instanceof BlackMultiChoiceAdapter.ViewHolder) {
-            BlackMultiChoiceAdapter.ViewHolder viewHolder = (BlackMultiChoiceAdapter.ViewHolder) tagObj;
+            final BlackMultiChoiceAdapter.ViewHolder viewHolder = (BlackMultiChoiceAdapter.ViewHolder) tagObj;
             mAdapter.onItemClick(viewHolder.friend.getUserId());
+
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+            dialog.setTitle("从黑名单中删除");
+            dialog.setItems(new String[]{"删除", "取消"}, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    switch (i) {
+                        case 0:
+                            if (RongIM.getInstance()!=null)
+                                RongIM.getInstance().getRongIMClient().removeFromBlacklist(viewHolder.friend.getUserId(), new RongIMClient.RemoveFromBlacklistCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Log.e(TAG, "----onSuccess--");
+                                        if(mFriendsList!= null) {
+                                            Friend friend = new Friend(viewHolder.friend.getUserId(),viewHolder.friend.getNickname(),viewHolder.friend.getPortrait());
+                                            mFriendsList.remove(friend);
+                                            fillData();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(RongIMClient.ErrorCode errorCode) {
+                                        Log.e(TAG,"----onError--");
+                                    }
+                                });
+
+                            break;
+                        case 1:
+
+                            break;
+                    }
+                }
+            });
+            dialog.show();
             return;
         }
 

@@ -29,7 +29,9 @@ import io.rong.app.DemoContext;
 public class NetUtils {
     private static HttpClient httpClient = new DefaultHttpClient();
 //    private static final String BASE_URL = "http://119.254.110.241:80/";
-    private static final String BASE_URL = "http://webim.demo.rong.io/";
+//    private static final String BASE_URL = "http://webim.demo.rong.io/";
+    private static final String BASE_URL = "http://119.254.110.114:7000/";
+
 
     /**
      * 发送GET请求方法
@@ -71,7 +73,6 @@ public class NetUtils {
 
         HttpPost httpPost = new HttpPost(BASE_URL + requestUrl);
         if (DemoContext.getInstance().getSharedPreferences() != null) {
-//            httpGet.addHeader("cookie","PHPAUTH=zEL1jDQc2rkuZHxN65gjEGWvWBWauB8pVMWty9fGioc%3D");
             httpPost.addHeader("cookie", DemoContext.getInstance().getSharedPreferences().getString("DEMO_COOKIE", null));
         }
         try {

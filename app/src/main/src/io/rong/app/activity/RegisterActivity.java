@@ -24,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.exception.InternalException;
+import com.sea_monster.network.AbstractHttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +38,6 @@ import io.rong.app.ui.EditTextHolder;
 import io.rong.app.ui.WinToast;
 import io.rong.app.utils.CommonUtils;
 import io.rong.app.utils.NetUtils;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.exception.InternalException;
-import com.sea_monster.network.AbstractHttpRequest;
 
 /**
  * Created by Bob on 2015/2/6.
@@ -258,6 +258,7 @@ public class RegisterActivity extends BaseApiActivity implements View.OnClickLis
 
             case R.id.de_left://登录
                 startActivity(new Intent(this,LoginActivity.class));
+                finish();
                 break;
             case R.id.de_right://忘记密码
                 WinToast.toast(this,"忘记密码");
@@ -282,11 +283,8 @@ public class RegisterActivity extends BaseApiActivity implements View.OnClickLis
 
             @Override
             protected void onPostExecute(String result) {
-
                 Log.e(TAG,"--------onPostExecute-----+"+result);
             }
-
-
         }.execute();
     }
 
@@ -308,10 +306,7 @@ public class RegisterActivity extends BaseApiActivity implements View.OnClickLis
 
             if (obj instanceof Status) {
                 Status status = (Status) obj;
-
                 Gson gson = new Gson();
-
-
                 if (status.getCode() == 200) {
                     WinToast.toast(this, R.string.register_success);
 

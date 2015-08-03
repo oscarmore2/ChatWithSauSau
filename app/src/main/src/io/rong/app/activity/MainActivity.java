@@ -45,13 +45,16 @@ import io.rong.app.R;
 import io.rong.app.fragment.ChatRoomListFragment;
 import io.rong.app.fragment.CustomerFragment;
 import io.rong.app.fragment.GroupListFragment;
+import io.rong.app.message.DeAgreedFriendRequestMessage;
 import io.rong.app.model.Groups;
 import io.rong.app.ui.LoadingDialog;
+import io.rong.app.utils.Constants;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.fragment.ConversationListFragment;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
+import io.rong.imlib.model.UserInfo;
 
 public class MainActivity extends BaseApiActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.OnMenuVisibilityListener, Handler.Callback {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -502,16 +505,25 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
         switch (item.getItemId()) {
             case R.id.add_item1://发起聊天
                 startActivity(new Intent(this, FriendListActivity.class));
+
+//                RongIM.getInstance().getRongIMClient().getNotificationQuietHours(new RongIMClient.GetNotificationQuietHoursCallback() {
+//                    @Override
+//                    public void onSuccess(String startTime, int spanMinutes) {
+//
+//                        Log.e(TAG,"-----onSuccess-dddd-----"+startTime);
+//                    }
+//
+//                    @Override
+//                    public void onError(RongIMClient.ErrorCode errorCode) {
+//                        Log.e(TAG,"-----onError--ddddd----"+errorCode);
+//                    }
+//                });
+
                 break;
             case R.id.add_item2://选择群组
 
-
-                List<String> ids = new ArrayList<String>();
-                ids.add("22871");
-                ids.add("38349");
-                RongIM.getInstance().createDiscussionChat(this,ids,"your daye");
-//                if (RongIM.getInstance() != null)
-//                    RongIM.getInstance().startSubConversationList(this, Conversation.ConversationType.GROUP);
+                if (RongIM.getInstance() != null)
+                    RongIM.getInstance().startSubConversationList(this, Conversation.ConversationType.GROUP);
                 break;
             case R.id.add_item3://通讯录
                 startActivity(new Intent(MainActivity.this, DeAdressListActivity.class));
@@ -557,6 +569,8 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
 
     @Override
@@ -655,6 +669,39 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
                 }
             }
         }
+    }
+
+    private void semdMessage() {
+        String id = "22830";
+
+        final DeAgreedFriendRequestMessage message = new DeAgreedFriendRequestMessage(id, "agree");
+        if (DemoContext.getInstance() != null) {
+            //获取当前用户的 userid
+            String userid = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USERID", "defalte");
+            UserInfo userInfo = DemoContext.getInstance().getUserInfoById(userid);
+            //把用户信息设置到消息体中，直接发送给对方，可以不设置，非必选项
+            message.setUserInfo(userInfo);
+            if (RongIM.getInstance() != null) {
+
+                //发送一条添加成功的自定义消息，此条消息不会在ui上展示
+                RongIM.getInstance().getRongIMClient().sendMessage(Conversation.ConversationType.PRIVATE, id, message, null,null, new RongIMClient.SendMessageCallback() {
+                    @Override
+                    public void onError(Integer messageId, RongIMClient.ErrorCode e) {
+                        Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onError--");
+                        if (mDialog != null)
+                            mDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onSuccess(Integer integer) {
+                        Log.e(TAG, Constants.DEBUG + "------DeAgreedFriendRequestMessage----onSuccess--" + message.getMessage());
+                        if (mDialog != null)
+                            mDialog.dismiss();
+                    }
+                });
+            }
+        }
+
     }
 
 }

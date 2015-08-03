@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -28,8 +31,6 @@ import io.rong.imkit.widget.AsyncImageView;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Group;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
 
 /**
  * Created by Bob on 2015/3/28.
@@ -121,7 +122,7 @@ public class GroupDetailActivity extends BaseApiActivity implements View.OnClick
                 mGroupIntro.setText(mApiResult.getIntroduce().toString());
                 mGroupNum.setText(mApiResult.getNumber().toString());
                 Message mess = Message.obtain();
-                if (groupHashMap.containsKey(mApiResult.getId().toString())) {
+                if (groupHashMap!=null &&groupHashMap.containsKey(mApiResult.getId().toString())) {
                     mess.what = HAS_JOIN;
                 } else {
                     mess.what = NO_JOIN;

@@ -12,9 +12,14 @@
         android:orientation="vertical">
 
 
+        <!--<fragment-->
+            <!--android:id="@+id/de_fr_add_friend"-->
+            <!--android:name="io.rong.imkit.fragment.ConversationAddMemberFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
         <fragment
             android:id="@+id/de_fr_add_friend"
-            android:name="io.rong.imkit.fragment.ConversationAddMemberFragment"
+            android:name="io.rong.app.fragment.setting.RongConversationAddMemberFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -58,21 +63,38 @@
 
         </RelativeLayout>
 
+        <!--<fragment-->
+            <!--android:id="@+id/de_fr_to_top"-->
+            <!--android:name="io.rong.imkit.fragment.SetConversationToTopFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
+
+        <!--<fragment-->
+            <!--android:id="@+id/de_fr_set_conver"-->
+            <!--android:name="io.rong.imkit.fragment.SetConversationNotificationFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
+
+        <!--<fragment-->
+            <!--android:id="@+id/de_fr_clear"-->
+            <!--android:name="io.rong.imkit.fragment.ClearConversationMsgFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
         <fragment
             android:id="@+id/de_fr_to_top"
-            android:name="io.rong.imkit.fragment.SetConversationToTopFragment"
+            android:name="io.rong.app.fragment.setting.RongSetConversationToTopFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <fragment
             android:id="@+id/de_fr_set_conver"
-            android:name="io.rong.imkit.fragment.SetConversationNotificationFragment"
+            android:name="io.rong.app.fragment.setting.RongSetConversationNotificationFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <fragment
             android:id="@+id/de_fr_clear"
-            android:name="io.rong.imkit.fragment.ClearConversationMsgFragment"
+            android:name="io.rong.app.fragment.setting.RongClearConversationMsgFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

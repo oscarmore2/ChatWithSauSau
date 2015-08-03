@@ -29,8 +29,6 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
     Handler mUploadHandler;
     private int REQUEST_CONTACT = 20;
 
-//    Contacts
-
     public ContactsProvider(RongContext context) {
         super(context);
         mWorkThread = new HandlerThread("RongDemo");
@@ -40,6 +38,7 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
 
     /**
      * 设置展示的图标
+     *
      * @param context
      * @return
      */
@@ -51,17 +50,18 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
 
     /**
      * 设置图标下的title
+     *
      * @param context
      * @return
      */
     @Override
     public CharSequence obtainPluginTitle(Context context) {
-        //R.string.add_contacts  通讯录
         return context.getString(R.string.add_contacts);
     }
 
     /**
      * click 事件
+     *
      * @param view
      */
     @Override
@@ -97,11 +97,14 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
         public void run() {
             String[] contact = getPhoneContacts(mUri);
 
+            if(contact[0] == null && contact[1] == null)
+                return;
+
             String showMessage = contact[0] + "\n" + contact[1];
             final TextMessage content = TextMessage.obtain(showMessage);
 
             if (RongIM.getInstance().getRongIMClient() != null)
-                RongIM.getInstance().getRongIMClient().sendMessage(getCurrentConversation().getConversationType(), getCurrentConversation().getTargetId(), content, null, new RongIMClient.SendMessageCallback() {
+                RongIM.getInstance().getRongIMClient().sendMessage(getCurrentConversation().getConversationType(), getCurrentConversation().getTargetId(), content, null, null, new RongIMClient.SendMessageCallback() {
                     @Override
                     public void onError(Integer integer, RongIMClient.ErrorCode errorCode) {
                         Log.d("ExtendProvider", "onError--" + errorCode);
@@ -120,21 +123,23 @@ public class ContactsProvider extends InputProvider.ExtendProvider {
         String[] contact = new String[2];
         ContentResolver cr = getContext().getContentResolver();
         Cursor cursor = cr.query(uri, null, null, null, null);
-
         if (cursor != null) {
-            cursor.moveToFirst();
-            int nameFieldColumnIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
-            contact[0] = cursor.getString(nameFieldColumnIndex);
+            try {
+                cursor.moveToFirst();
+                int nameFieldColumnIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
+                contact[0] = cursor.getString(nameFieldColumnIndex);
+                String ContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                Cursor phone = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + ContactId, null, null);
 
-            String ContactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            Cursor phone = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + ContactId, null, null);
+                if (phone != null) {
+                    phone.moveToFirst();
+                    contact[1] = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                }
+                phone.close();
+                cursor.close();
+            } catch (Exception e) {
 
-            if (phone != null) {
-                phone.moveToFirst();
-                contact[1] = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             }
-            phone.close();
-            cursor.close();
         }
         return contact;
     }

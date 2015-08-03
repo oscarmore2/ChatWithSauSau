@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Process;
 import android.support.v7.app.ActionBar;
 import android.telephony.TelephonyManager;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import io.rong.app.App;
 import io.rong.app.DemoContext;
 import io.rong.app.R;
 import io.rong.app.RongCloudEvent;
@@ -48,11 +51,8 @@ import io.rong.app.ui.LoadingDialog;
 import io.rong.app.ui.WinToast;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
-import io.rong.imlib.model.Conversation;
-import io.rong.imlib.model.Conversation.ConversationType;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.UserInfo;
-import io.rong.message.TextMessage;
 
 /**
  * Created by Bob on 2015/1/30.
@@ -139,6 +139,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
     UserInfosDao mUserInfosDao;
     String userName;
     private boolean isFirst = false;
+    private boolean isSuccess = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +219,8 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.app_sign_in_bt://登录
 
+
+//                initnn();
                 userName = mUserNameEt.getEditableText().toString();
                 String passWord = mPassWordEt.getEditableText().toString();
                 String name = null;
@@ -277,6 +280,46 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
         }
     }
 
+    private void initnn() {
+
+        try {
+            /**
+             * IMKit SDK调用第二步
+             *
+             * 建立与服务器的连接
+             *
+             * 详见API
+             * http://docs.rongcloud.cn/api/android/imkit/index.html
+             */
+
+            String token1 = "goRD6aEizPwyMroHrDiNy0mKqBR0xzzHiUbhLnyx3yBK3kaUFLWcHXyretl2aBcdo5RjLCLkI6BGlT5sEFtMyDgGdR7yGDOY0c6/gCy2bR4=";
+            RongIM.connect(token1, new RongIMClient.ConnectCallback() {
+                        @Override
+                        public void onTokenIncorrect() {
+                            Log.e("LoginActivity", "---------onTokenIncorrect userId----------:");
+                        }
+
+                        @Override
+                        public void onSuccess(String userId) {
+                            Log.e("LoginActivity", "---------onSuccess userId----------:" + userId);
+
+                            RongCloudEvent.getInstance().setOtherListener();
+
+                        }
+
+                        @Override
+                        public void onError(RongIMClient.ErrorCode e) {
+                            mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
+                            Log.e("LoginActivity", "---------onError ----------:" + e);
+                        }
+                    }
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public boolean handleMessage(Message msg) {
 
@@ -330,12 +373,9 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
 
     private void httpLoginSuccess(User user) {
 
-
         if (user.getCode() == 200) {
-
             getTokenHttpRequest = DemoContext.getInstance().getDemoApi().getToken(this);
         }
-
     }
 
 
@@ -351,46 +391,48 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
              * http://docs.rongcloud.cn/api/android/imkit/index.html
              */
             Log.e("LoginActivity", "---------onSuccess gettoken----------:" + token);
-            RongIM.connect(token, new RongIMClient.ConnectCallback() {
-                        @Override
-                        public void onTokenIncorrect() {
-                            Log.e("LoginActivity", "---------onTokenIncorrect userId----------:");
-                        }
-
-                        @Override
-                        public void onSuccess(String userId) {
-                            Log.e("LoginActivity", "---------onSuccess userId----------:" + userId);
-
-                            if (isFirst) {
-
-                                getUserInfoHttpRequest = DemoContext.getInstance().getDemoApi().getFriends(LoginActivity.this);
-                                DemoContext.getInstance().deleteUserInfos();
-
-                            } else {
-                                final List<UserInfos> list = mUserInfosDao.loadAll();
-                                if (list != null && list.size() > 0) {
-                                    mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
-                                } else {
-                                    //请求网络
-                                    getUserInfoHttpRequest = DemoContext.getInstance().getDemoApi().getFriends(LoginActivity.this);
-                                }
+            if ("io.rong.app".equals(App.getCurProcessName(getApplicationContext()))) {
+                RongIM.connect(token, new RongIMClient.ConnectCallback() {
+                            @Override
+                            public void onTokenIncorrect() {
+                                Log.e("LoginActivity", "---------onTokenIncorrect userId----------:");
                             }
-                            SharedPreferences.Editor edit = DemoContext.getInstance().getSharedPreferences().edit();
-                            edit.putString("DEMO_USERID", userId);
-                            edit.putString("DEMO_USERNAME", userName);
-                            edit.apply();
 
-                            RongCloudEvent.getInstance().setOtherListener();
+                            @Override
+                            public void onSuccess(String userId) {
+                                Log.e("LoginActivity", "---------onSuccess userId----------:" + userId);
+                                isSuccess = true;
+                                if (isFirst) {
+                                    getUserInfoHttpRequest = DemoContext.getInstance().getDemoApi().getFriends(LoginActivity.this);
+                                    DemoContext.getInstance().deleteUserInfos();
 
+                                } else {
+                                    final List<UserInfos> list = mUserInfosDao.loadAll();
+                                    if (list != null && list.size() > 0) {
+                                        mHandler.obtainMessage(HANDLER_LOGIN_SUCCESS).sendToTarget();
+                                    } else {
+                                        //请求网络
+                                        getUserInfoHttpRequest = DemoContext.getInstance().getDemoApi().getFriends(LoginActivity.this);
+                                    }
+                                }
+                                SharedPreferences.Editor edit = DemoContext.getInstance().getSharedPreferences().edit();
+                                edit.putString("DEMO_USERID", userId);
+                                edit.putString("DEMO_USERNAME", userName);
+                                edit.apply();
+
+                                RongCloudEvent.getInstance().setOtherListener();
+
+                            }
+
+                            @Override
+                            public void onError(RongIMClient.ErrorCode e) {
+                                isSuccess = false;
+                                mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
+                                Log.e("LoginActivity", "---------onError ----------:" + e);
+                            }
                         }
-
-                        @Override
-                        public void onError(RongIMClient.ErrorCode e) {
-                            mHandler.obtainMessage(HANDLER_LOGIN_FAILURE).sendToTarget();
-                            Log.e("LoginActivity", "---------onError ----------:" + e);
-                        }
-                    }
-            );
+                );
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -458,7 +500,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
 
                             userInfos.setUserid(friends.getResult().get(i).getId());
                             userInfos.setUsername(friends.getResult().get(i).getUsername());
-                            userInfos.setStatus("5");
+                            userInfos.setStatus("1");
                             if (friends.getResult().get(i).getPortrait() != null)
                                 userInfos.setPortrait(friends.getResult().get(i).getPortrait());
                             friendsList.add(userInfos);
@@ -474,6 +516,7 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
                         customer.setUserid("kefu114");
                         customer.setPortrait("http://jdd.kefu.rongcloud.cn/image/service_80x80.png");
                         customer.setStatus("0");
+
                         friendsList.add(customer);
                         friendsList.add(addFriend);
 
@@ -521,19 +564,21 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
 
                     if (DemoContext.getInstance() != null)
                         DemoContext.getInstance().setGroupMap(groupM);
+                    if (isSuccess) {
+                        if (grouplist.size() > 0) {
+                            RongIM.getInstance().getRongIMClient().syncGroup(grouplist, new RongIMClient.OperationCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.e(TAG, "---syncGroup-onSuccess---");
+                                }
 
-                    if (grouplist.size() > 0)
-                        RongIM.getInstance().getRongIMClient().syncGroup(grouplist, new RongIMClient.OperationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.e(TAG, "---syncGroup-onSuccess---");
-                            }
-
-                            @Override
-                            public void onError(RongIMClient.ErrorCode errorCode) {
-                                Log.e(TAG, "---syncGroup-onError---");
-                            }
-                        });
+                                @Override
+                                public void onError(RongIMClient.ErrorCode errorCode) {
+                                    Log.e(TAG, "---syncGroup-onError---");
+                                }
+                            });
+                        }
+                    }
                 }
             } else {
 //                    WinToast.toast(this, groups.getCode());
@@ -656,5 +701,37 @@ public class LoginActivity extends BaseApiActivity implements View.OnClickListen
                     .getWindowToken(), 0);// 隐藏软键盘
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (KeyEvent.KEYCODE_BACK == event.getKeyCode()) {
+
+
+            final AlertDialog.Builder alterDialog = new AlertDialog.Builder(this);
+            alterDialog.setMessage("确定退出应用？");
+            alterDialog.setCancelable(true);
+
+            alterDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (RongIM.getInstance() == null)
+                        RongIM.getInstance().logout();
+
+                    Process.killProcess(Process.myPid());
+                }
+            });
+            alterDialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alterDialog.show();
+        }
+
+        return false;
+    }
+
 
 }

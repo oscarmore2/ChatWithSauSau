@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import io.rong.app.DemoContext;
 import io.rong.app.R;
 import io.rong.app.ui.WinToast;
 import io.rong.app.utils.Constants;

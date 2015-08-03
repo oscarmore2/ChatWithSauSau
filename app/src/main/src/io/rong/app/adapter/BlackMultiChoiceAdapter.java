@@ -1,7 +1,6 @@
 package io.rong.app.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -11,13 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.rong.app.R;
-import io.rong.app.activity.PersonalDetailActivity;
 import io.rong.app.model.Friend;
 import io.rong.imkit.widget.AsyncImageView;
 
 public class BlackMultiChoiceAdapter extends BlackListAdapter {
 
-    private static final  String TAG =BlackMultiChoiceAdapter.class.getSimpleName() ;
+    private static final String TAG = BlackMultiChoiceAdapter.class.getSimpleName();
     private ArrayList<Friend> mFriends;
 
 
@@ -25,6 +23,7 @@ public class BlackMultiChoiceAdapter extends BlackListAdapter {
         super(context, friends);
         this.mFriends = (ArrayList<Friend>) friends;
     }
+
     @Override
     protected void bindView(View v, int partition, List<Friend> data, int position) {
         super.bindView(v, partition, data, position);
@@ -39,7 +38,7 @@ public class BlackMultiChoiceAdapter extends BlackListAdapter {
         Resource res = new Resource(friend.getPortrait());
 
         photo.setDefaultDrawable(mContext.getResources().getDrawable(R.drawable.de_default_portrait));
-                photo.setResource(res);
+        photo.setResource(res);
 
         String userId = friend.getUserId();
         holder.userId = userId;
@@ -53,10 +52,6 @@ public class BlackMultiChoiceAdapter extends BlackListAdapter {
 
     @Override
     public void onItemClick(String friendId) {
-
-            Intent intent = new Intent(getContext(), PersonalDetailActivity.class);
-            intent.putExtra("PERSONAL", friendId);
-            getContext().startActivity(intent);
 
     }
 

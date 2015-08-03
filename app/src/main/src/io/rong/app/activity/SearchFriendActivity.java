@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +23,6 @@ import io.rong.app.model.ApiResult;
 import io.rong.app.model.Friends;
 import io.rong.app.ui.LoadingDialog;
 import io.rong.app.utils.Constants;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
 
 /**
  * Created by Bob on 2015/3/26.

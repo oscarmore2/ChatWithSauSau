@@ -8,17 +8,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+import com.sea_monster.resource.Resource;
+
 import io.rong.app.DemoContext;
 import io.rong.app.R;
 import io.rong.app.model.User;
 import io.rong.app.ui.LoadingDialog;
 import io.rong.app.ui.WinToast;
 import io.rong.app.utils.Constants;
+import io.rong.imkit.widget.AsyncImageView;
 import io.rong.imlib.model.UserInfo;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
-import io.rong.imkit.widget.AsyncImageView ;
-import com.sea_monster.resource.Resource;
 
 
 /**
@@ -35,6 +36,7 @@ public class DePersonalDetailActivity extends BaseApiActivity implements View.On
     private AbstractHttpRequest<User> mUserHttpRequest;
     private LoadingDialog mDialog;
     private UserInfo user;
+    String userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,22 +60,28 @@ public class DePersonalDetailActivity extends BaseApiActivity implements View.On
     protected void initData() {
         mAddFriend.setOnClickListener(this);
         mDialog = new LoadingDialog(this);
+        userID = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USERID","defalt");
 
         if (getIntent().hasExtra("SEARCH_USERID")&&getIntent().hasExtra("SEARCH_USERNAME")&&getIntent().hasExtra("SEARCH_PORTRAIT")) {
-
+            String userid = getIntent().getStringExtra("SEARCH_USERID");
+            if(userid.equals(userID)){
+                mAddFriend.setVisibility(View.GONE);
+            }
             mFriendName.setText(getIntent().getStringExtra("SEARCH_USERNAME"));
             mFriendImg.setResource(new Resource(getIntent().getStringExtra("SEARCH_PORTRAIT")));
-
         }
 
         if (getIntent().hasExtra("USER")) {
             user = getIntent().getParcelableExtra("USER");
             mFriendName.setText(user.getName());
             mFriendImg.setResource(new Resource(user.getPortraitUri()));
-            String userID = DemoContext.getInstance().getSharedPreferences().getString("DEMO_USERID","defalt");
             if(user.getUserId().equals(userID)){
                 mAddFriend.setVisibility(View.GONE);
             }else if(user.getUserId().equals("kefu114")){
+                mAddFriend.setVisibility(View.GONE);
+            }
+
+            if (DemoContext.getInstance() != null && DemoContext.getInstance().searcheUserInfosById(user.getUserId())) {
                 mAddFriend.setVisibility(View.GONE);
             }
         }

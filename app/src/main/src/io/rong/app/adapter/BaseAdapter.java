@@ -1,7 +1,8 @@
 package io.rong.app.adapter;
 
 import android.content.Context;
-import android.widget.ListView;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,110 +10,112 @@ import java.util.List;
 
 
 public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
+    Context mContext;
+    List<T> mList;
 
-    protected List<T> dataSet;
-
-//    protected Handler handler = new Handler();
-
-    protected Context mContext;
-
-    private ListView mListView;
-
-    public BaseAdapter(Context context) {
-        this(context, new ArrayList<T>());
+    public BaseAdapter(){
+        mList = new ArrayList<T>();
     }
 
-    public BaseAdapter(Context context, List<T> data) {
-        this.mContext = context;
-        this.dataSet = data;
+    public BaseAdapter(Context context){
+        mContext = context;
+        mList = new ArrayList<T>();
     }
 
-    public Context getContext() {
-        return mContext;
+    @SuppressWarnings("unchecked")
+    protected <T extends View> T findViewById(View view, int id) {
+        return (T) view.findViewById(id);
     }
 
-    public void addData(T data) {
-        this.dataSet.add(data);
+    public int findPosition(T message) {
+        int index = getCount();
+        int position = -1;
+        while (index-- > 0) {
+            if (message.equals(getItem(index))) {
+                position = index;
+                break;
+            }
+        }
+        return position;
     }
 
-    public void addData(Collection<T> data) {
-        this.dataSet.addAll(data);
+    public int findPosition(long id){
+        int index = getCount();
+        int position = -1;
+        while (index-- > 0) {
+            if (getItemId(index) == id) {
+                position = index;
+                break;
+            }
+        }
+        return position;
     }
 
-    public void addData(int index, Collection<T> data) {
-        this.dataSet.addAll(index, data);
+    public void addCollection(Collection<T> collection){
+        mList.addAll(collection);
     }
 
-    public void removeData(Collection<T> data) {
-        this.dataSet.removeAll(data);
-    }
+    public void addCollection(T ... collection){
 
-    public void removeAll() {
-        if (this.dataSet != null) {
-            this.dataSet.clear();
+        for(T t : collection){
+            mList.add(t);
         }
     }
 
-    public void remove(T data) {
-        this.dataSet.remove(data);
+    public void add(T t){
+        mList.add(t);
     }
 
-    public void remove(int position) {
-        dataSet.remove(position);
+    public void add(T t,int position){
+        mList.add(position,t);
     }
 
-    public List<T> subData(int index, int count) {
-        return this.dataSet.subList(index, index + count);
+    public void remove(int position){
+        mList.remove(position);
+    }
+
+    public void removeAll(){
+        mList.clear();
+    }
+
+    public void clear(){
+        mList.clear();
     }
 
     @Override
     public int getCount() {
-        return dataSet.size();
-    }
+        if(mList == null)
+            return 0;
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
+        return mList.size();
     }
 
     @Override
     public T getItem(int position) {
-        return dataSet.get(position);
+        if(mList == null)
+            return null;
+
+        if(position>=mList.size())
+            return null;
+
+        return mList.get(position);
     }
 
-    public void setItem(int position, T obj) {
-        dataSet.set(position, obj);
-    }
-
-    public void addItem(int position, T obj) {
-        dataSet.add(position, obj);
-    }
-
-    public void addItems(int position, Collection<T> data) {
-        this.dataSet.addAll(position, data);
-    }
-
-
-    public void setListView(ListView listView) {
-        this.mListView = listView;
-    }
-
-
-    public void notifyDataSetChanged(int position) {
-
-        if (mListView != null) {
-
-
-            int firstVisiblePosition = mListView.getFirstVisiblePosition();
-            int lastVisiblePosition = mListView.getLastVisiblePosition();
-
-            if (position >= firstVisiblePosition && position <= lastVisiblePosition) {
-                getView(position, mListView.getChildAt(position - firstVisiblePosition), mListView);
-            }
-
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view;
+        if (convertView != null) {
+            view = convertView;
+        } else {
+            view = newView(mContext, position, parent);
         }
-
+        bindView(view, position, getItem(position));
+        return view;
     }
+
+    protected abstract View newView(Context context, int position, ViewGroup group);
+
+    protected abstract void bindView(View v, int position, T data);
 
 
 

@@ -6,19 +6,16 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.greenrobot.dao.query.QueryBuilder;
 import io.rong.app.activity.SOSOLocationActivity;
 import io.rong.app.common.DemoApi;
 import io.rong.app.database.DBManager;
 import io.rong.app.database.UserInfos;
 import io.rong.app.database.UserInfosDao;
-import io.rong.app.model.User;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.model.Group;
 import io.rong.imlib.model.UserInfo;
@@ -32,8 +29,6 @@ public class DemoContext {
     public Context mContext;
     private DemoApi mDemoApi;
     private HashMap<String, Group> groupMap;
-    private ArrayList<UserInfo> mUserInfos;
-    private ArrayList<UserInfo> mFriendInfos;
     private SharedPreferences mPreferences;
     private RongIM.LocationProvider.LocationCallback mLastLocationCallback;
     private UserInfosDao mUserInfosDao;
@@ -71,9 +66,6 @@ public class DemoContext {
         return mPreferences;
     }
 
-    public void setSharedPreferences(SharedPreferences sharedPreferences) {
-        this.mPreferences = sharedPreferences;
-    }
 
     public void setGroupMap(HashMap<String, Group> groupMap) {
         this.groupMap = groupMap;
@@ -83,28 +75,6 @@ public class DemoContext {
         return groupMap;
     }
 
-
-    public ArrayList<UserInfo> getUserInfos() {
-        return mUserInfos;
-    }
-
-    public void setUserInfos(ArrayList<UserInfo> userInfos) {
-        mUserInfos = userInfos;
-    }
-
-//    /**
-//     * 临时存放用户数据
-//     *
-//     * @param userInfos
-//     */
-//    public void setFriends(ArrayList<UserInfo> userInfos) {
-//
-//        this.mFriendInfos = userInfos;
-//    }
-//
-//    public ArrayList<UserInfo> getFriends() {
-//        return mFriendInfos;
-//    }
 
     public DemoApi getDemoApi() {
         return mDemoApi;
@@ -120,10 +90,11 @@ public class DemoContext {
 
     /**
      * 更新 好友信息
+     *
      * @param targetid
      * @param status
      */
-    public void updateUserInfos(String  targetid,String status){
+    public void updateUserInfos(String targetid, String status) {
 
         UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(targetid)).unique();
         userInfos.setStatus(status);
@@ -137,10 +108,11 @@ public class DemoContext {
 
     /**
      * 向数据库插入数据
-     * @param info 用户信息
+     *
+     * @param info   用户信息
      * @param status 状态
      */
-    public void insertOrReplaceUserInfo(UserInfo info,String status){
+    public void insertOrReplaceUserInfo(UserInfo info, String status) {
 
         UserInfos userInfos = new UserInfos();
         userInfos.setStatus(status);
@@ -149,15 +121,28 @@ public class DemoContext {
         userInfos.setUserid(info.getUserId());
         mUserInfosDao.insertOrReplace(userInfos);
     }
-    public  void insertOrReplaceUserInfoList(ArrayList<UserInfo> list,String status){
 
-        List<UserInfos> userInfos = new ArrayList<UserInfos>();
+    /**
+     * 通过userid 查找 UserInfos,判断是否为好友，查找的是本地的数据库
+     *
+     * @param userId
+     * @return
+     */
+    public boolean searcheUserInfosById(String userId) {
+        if (userId != null) {
 
+            UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userId)).unique();
 
+            if (userInfos == null)
+                return false;
 
-
-
+            if (userInfos.getStatus().equals("1") || userInfos.getStatus().equals("3") || userInfos.getStatus().equals("5")) {
+                return true;
+            }
+        }
+        return false;
     }
+
     /**
      * 通过userid 查找 UserInfo，查找的是本地的数据库
      *
@@ -166,12 +151,28 @@ public class DemoContext {
      */
     public UserInfo getUserInfoById(String userId) {
 
-        UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userId)).unique();
-
-        if (userInfos == null)
+        if (userId == null)
             return null;
+        UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userId)).unique();
+        if (userInfos == null && DemoContext.getInstance() != null) {
+            return null;
+        }
+
 
         return new UserInfo(userInfos.getUserid(), userInfos.getUsername(), Uri.parse(userInfos.getPortrait()));
+    }
+
+    public boolean hasUserId(String userId) {
+
+        if (userId != null) {
+
+            UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userId)).unique();
+
+            if (userInfos == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -182,7 +183,7 @@ public class DemoContext {
     public ArrayList<UserInfo> getFriendList() {
         List<UserInfo> userInfoList = new ArrayList<UserInfo>();
 
-        List<UserInfos> userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Status.eq("5")).list();
+        List<UserInfos> userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Status.eq("1")).list();
 
         if (userInfos == null)
             return null;
@@ -204,19 +205,22 @@ public class DemoContext {
 
         List<UserInfo> userInfoList = new ArrayList<UserInfo>();
         List<UserInfos> userInfosList = new ArrayList<UserInfos>();
+        UserInfo userInfo;
+        UserInfos userInfos;
 
         for (int i = 0; i < userIds.length; i++) {
-            UserInfos userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userIds[i])).unique();
+            userInfos = mUserInfosDao.queryBuilder().where(UserInfosDao.Properties.Userid.eq(userIds[i])).unique();
             userInfosList.add(userInfos);
-            UserInfo userInfo = new UserInfo(userInfosList.get(i).getUserid(), userInfosList.get(i).getUsername(), Uri.parse(userInfosList.get(i).getPortrait()));
-            userInfoList.add(userInfo);
+            if (mUserInfosDao.getKey(userInfosList.get(i)) != null) {
+                userInfo = new UserInfo(userInfosList.get(i).getUserid(), userInfosList.get(i).getUsername(), Uri.parse(userInfosList.get(i).getPortrait()));
+                userInfoList.add(userInfo);
+            }
         }
-
         if (userInfosList == null)
             return null;
 
 
-        return (ArrayList<UserInfo>) userInfoList;
+        return (ArrayList) userInfoList;
     }
 
     /**
@@ -249,6 +253,7 @@ public class DemoContext {
     public void setLastLocationCallback(RongIM.LocationProvider.LocationCallback lastLocationCallback) {
         this.mLastLocationCallback = lastLocationCallback;
     }
+
 
     class LocationProvider implements RongIM.LocationProvider {
 
