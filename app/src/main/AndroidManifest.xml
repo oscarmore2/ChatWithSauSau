@@ -78,7 +78,7 @@
             android:name=".activity.FriendListActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.DeAdressListActivity"
+            android:name=".activity.ContactsActivity"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activity.SearchFriendActivity"
@@ -162,7 +162,7 @@
         </activity>
 
         <activity
-            android:name=".activity.DemoActivity"
+            android:name=".activity.RongActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -202,7 +202,7 @@
         <activity android:name=".activity.PhotoActivity" />
 
         <activity
-            android:name=".activity.DemoSubActivity"
+            android:name=".activity.RongSubActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -227,6 +227,7 @@
             android:value="DEMO_GITHUB"></meta-data>
 
         <activity android:name=".activity.SOSOLocationActivity" />
+
 
 
         <!--begin rongcloud-->
@@ -264,7 +265,7 @@
 
         <service
             android:name="io.rong.push.PushService"
-            android:process="io.rong.push">
+            android:process="io.rong.push" > <!-- Waring: The name of the push process can't be changed!!! -->
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -273,7 +274,7 @@
         </service>
         <service
             android:name="io.rong.push.CommandService"
-            android:process="io.rong.push">
+            android:process="io.rong.push" > <!-- Waring: The name of the push process can't be changed!!! -->
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
 
@@ -283,7 +284,7 @@
 
         <receiver
             android:name="io.rong.push.PushReceiver"
-            android:process="io.rong.push">
+            android:process="io.rong.push" > <!-- Waring: The name of the push process can't be changed!!! -->
             <intent-filter>
                 <action android:name="io.rong.imlib.action.push.heartbeat" />
             </intent-filter>
@@ -293,11 +294,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-        <receiver
-            android:name="io.rong.imlib.HeartbeatReceiver"
-            android:process=":ipc" />
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name="io.rong.imkit.tools.SelectPictureActivity"
@@ -310,27 +317,27 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="io.rong.imkit.widget.provider.TakingPicturesActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
         <service
             android:name="io.rong.imlib.ipc.RongService"
-            android:process=":ipc"></service>
+            android:process=":ipc" >
+        </service>
         <service android:name="io.rong.imlib.ReConnectService" />
 
-        <receiver android:name="io.rong.imlib.ipc.PushMessageReceiver">
+        <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
+        <receiver android:name="io.rong.imlib.ipc.PushMessageReceiver" >
             <intent-filter>
                 <action android:name="io.rong.push.message" />
             </intent-filter>
         </receiver>
-        <receiver android:name="io.rong.imlib.ConnectChangeReceiver" />
-
+        <receiver
+            android:name="io.rong.imlib.HeartbeatReceiver"
+            android:process=":ipc" />
         <meta-data
             android:name="RONG_CLOUD_APP_KEY"
             android:value="z3v5yqkbv8v30" />
-        <!--<meta-data-->
-        <!--android:name="RONG_CLOUD_APP_KEY"-->
-        <!--android:value="c9kqb3rdkh5wj" />-->
-
 
         <!--end rongcloud-->
 
