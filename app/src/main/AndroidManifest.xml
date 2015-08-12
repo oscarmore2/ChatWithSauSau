@@ -263,7 +263,7 @@
             </intent-filter>
         </activity>
 
-        <service
+       <service
             android:name="io.rong.push.PushService"
             android:process="io.rong.push" > <!-- Waring: The name of the push process can't be changed!!! -->
             <intent-filter>
@@ -306,7 +306,7 @@
             </intent-filter>
         </receiver>
 
-        <activity
+         <activity
             android:name="io.rong.imkit.tools.SelectPictureActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -320,7 +320,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 
-        <service
+  <service
             android:name="io.rong.imlib.ipc.RongService"
             android:process=":ipc" >
         </service>
