@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,11 +28,12 @@ import io.rong.app.utils.Constants;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.widget.AsyncImageView;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.UserInfo;
 
 /**
  * Created by Bob on 2015/4/7.
- *
+ * <p/>
  * 个人详情
  */
 public class PersonalDetailActivity extends BaseApiActivity implements View.OnClickListener {
@@ -87,7 +87,6 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
             userInfo = DemoContext.getInstance().getUserInfoById(friendid);
             mPersonalName.setText(userInfo.getName().toString());
             mPersonalId.setText("Id:" + userInfo.getUserId().toString());
-
         }
 
         if (getIntent().hasExtra("USER")) {
@@ -96,13 +95,13 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
             mPersonalName.setText(userInfo.getName().toString());
             mPersonalImg.setResource(new Resource(userInfo.getPortraitUri()));
 
-            if(getIntent().hasExtra("SEARCH_CONVERSATION")){
-                String conversation  = getIntent().getStringExtra("SEARCH_CONVERSATION");
-                if(conversation.equals("CUSTOMER_SERVICE")){
+            if (getIntent().hasExtra("SEARCH_CONVERSATION")) {
+                String conversation = getIntent().getStringExtra("SEARCH_CONVERSATION");
+                if (conversation.equals("CUSTOMER_SERVICE")) {
                     mSendMessage.setVisibility(View.GONE);
                 }
             }
-            if(userInfo.getUserId().equals(DemoContext.getInstance().getSharedPreferences().getString("DEMO_USER_ID","defult"))){
+            if (userInfo.getUserId().equals(DemoContext.getInstance().getSharedPreferences().getString("DEMO_USER_ID", "defult"))) {
                 mSendMessage.setVisibility(View.GONE);
             }
         }
@@ -118,19 +117,9 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
                 final Status status = (Status) obj;
                 if (status.getCode() == 200) {
                     WinToast.toast(this, "删除好友成功");
-
-                    Log.e("", "-------delete friend success------");
                     if (DemoContext.getInstance() != null && friendid != null) {
 
-                        DemoContext.getInstance().updateUserInfos(friendid,"2");
-
-//                        ArrayList<UserInfo> friendResList = DemoContext.getInstance().updateUserInfos();
-//                        for (int i = 0; i < friendResList.size(); i++) {
-//                            if (friendResList.get(i).getUserId().equals(friendid)) {
-//                                friendResList.remove(friendResList.get(i));
-//                            }
-//                        }
-//                        DemoContext.getInstance().setFriends(friendResList);
+                        DemoContext.getInstance().updateUserInfos(friendid, "2");
 
                         Intent intent = new Intent();
                         this.setResult(Constants.DELETE_USERNAME_REQUESTCODE, intent);
@@ -153,8 +142,8 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.send_message:
                 if (RongIM.getInstance() != null && DemoContext.getInstance() != null) {
-                    if(friendid != null)
-                    RongIM.getInstance().startPrivateChat(PersonalDetailActivity.this, friendid, DemoContext.getInstance().getUserInfoById(friendid).getName().toString());
+                    if (friendid != null)
+                        RongIM.getInstance().startPrivateChat(PersonalDetailActivity.this, friendid, DemoContext.getInstance().getUserInfoById(friendid).getName().toString());
                 }
                 break;
         }
@@ -196,9 +185,9 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
                     public void onClick(DialogInterface dialog, int which) {
                         if (DemoContext.getInstance() != null && friendid != null) {
                             mDeleteFriendRequest = DemoContext.getInstance().getDemoApi().deletefriends(friendid, PersonalDetailActivity.this);
-//                            if(DemoContext.getInstance()!=null){
-//                                DemoContext.getInstance().getFriends().remove(friendid);
-//                            }
+                            if (RongIM.getInstance() != null) {
+                                RongIM.getInstance().getRongIMClient().removeConversation(Conversation.ConversationType.PRIVATE, friendid);
+                            }
                         }
                         if (mDialog != null && !mDialog.isShowing()) {
                             mDialog.show();
@@ -215,9 +204,7 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
 
                 break;
             case android.R.id.home:
-//                startActivity(new Intent(this,DeAdressListActivity.class));
                 finish();
-
                 break;
 
         }
@@ -225,12 +212,4 @@ public class PersonalDetailActivity extends BaseApiActivity implements View.OnCl
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (KeyEvent.KEYCODE_BACK == event.getKeyCode()) {
-//            startActivity(new Intent(this,DeAdressListActivity.class));
-//            finish();
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
 }

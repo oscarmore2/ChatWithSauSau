@@ -34,22 +34,16 @@ import io.rong.app.parser.GsonParser;
 public class DemoApi extends BaseApi {
     //        private static String HOST = "http://119.254.110.241:80/";
     private static String   HOST = "http://webim.demo.rong.io/";
-//    private static String   HOST = "http://119.254.110.114:7000/";
-
-
     private final static String DEMO_LOGIN_EMAIL = "email_login";
     private final static String DEMO_FRIENDS = "get_friend";
     private final static String DEMO_REQ = "reg";
     private final static String DEMO_UPDATE_PROFILE = "update_profile";
-
     private final static String DEMO_TOKEN = "token";
     private final static String DEMO_JOIN_GROUP = "join_group";
     private final static String DEMO_QUIT_GROUP = "quit_group";
     private final static String DEMO_GET_ALL_GROUP = "get_all_group";
     private final static String DEMO_GET_MY_GROUP = "get_my_group";
     private final static String DEMO_GET_GROUP = "get_group";
-
-
     private final static String DEMO_SEARCH_NAME = "seach_name";
     private final static String DEMO_GET_FRIEND = "get_friend";
     private final static String DEMO_REQUEST_FRIEND = "request_friend";

@@ -20,12 +20,12 @@ import java.util.List;
 import io.rong.app.R;
 import io.rong.app.model.Friend;
 import io.rong.app.model.FriendSectionIndexer;
-import io.rong.app.ui.DePinnedHeaderAdapter;
+import io.rong.app.ui.PinnedHeaderAdapter;
 import com.sea_monster.resource.Resource;
 import io.rong.imkit.widget.AsyncImageView;
 
 @SuppressLint("UseSparseArrays")
-public class BlackListAdapter extends DePinnedHeaderAdapter<Friend> implements Filterable {
+public class BlackListAdapter extends PinnedHeaderAdapter<Friend> implements Filterable {
 
     private LayoutInflater mInflater;
     private ArrayList<View> mViewList;

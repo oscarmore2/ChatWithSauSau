@@ -28,12 +28,12 @@ import io.rong.app.message.DeAgreedFriendRequestMessage;
 import io.rong.app.model.User;
 import io.rong.app.photo.PhotoCollectionsProvider;
 import io.rong.app.provider.ContactsProvider;
-import io.rong.app.provider.NewCameraInputProvider;
 import io.rong.app.ui.WinToast;
 import io.rong.imkit.PushNotificationManager;
 import io.rong.imkit.RongContext;
 import io.rong.imkit.RongIM;
 import io.rong.imkit.model.UIConversation;
+import io.rong.imkit.widget.provider.CameraInputProvider;
 import io.rong.imkit.widget.provider.InputProvider;
 import io.rong.imkit.widget.provider.LocationInputProvider;
 import io.rong.imkit.widget.provider.VoIPInputProvider;
@@ -66,7 +66,6 @@ import io.rong.notification.PushNotificationMessage;
  * 3、用户信息提供者：GetUserInfoProvider。
  * 4、好友信息提供者：GetFriendsProvider。
  * 5、群组信息提供者：GetGroupInfoProvider。
- * 蓉c
  * 7、连接状态监听器，以获取连接相关状态：ConnectionStatusListener。
  * 8、地理位置提供者：LocationProvider。
  * 9、自定义 push 通知： OnReceivePushMessageListener。
@@ -142,14 +141,14 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
 //        //扩展功能自定义
         InputProvider.ExtendProvider[] provider = {
                 new PhotoCollectionsProvider(RongContext.getInstance()),//图片
-                new NewCameraInputProvider(RongContext.getInstance()),//相机
+                new CameraInputProvider(RongContext.getInstance()),//相机
                 new LocationInputProvider(RongContext.getInstance()),//地理位置
                 new VoIPInputProvider(RongContext.getInstance()),// 语音通话
                 new ContactsProvider(RongContext.getInstance())//通讯录
         };
         InputProvider.ExtendProvider[] provider1 = {
                 new PhotoCollectionsProvider(RongContext.getInstance()),//图片
-                new NewCameraInputProvider(RongContext.getInstance()),//相机
+                new CameraInputProvider(RongContext.getInstance()),//相机
                 new LocationInputProvider(RongContext.getInstance()),//地理位置
         };
         RongIM.getInstance().resetInputExtensionProvider(Conversation.ConversationType.PRIVATE, provider);
@@ -247,6 +246,10 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
         if (messageContent instanceof TextMessage) {//文本消息
             TextMessage textMessage = (TextMessage) messageContent;
             Log.d(TAG, "onReceived-TextMessage:" + textMessage.getContent());
+            if(textMessage.getContent().equals("11")){
+                Log.e(TAG,"---onReceived--111111--");
+                return  false;
+            }
         } else if (messageContent instanceof ImageMessage) {//图片消息
             ImageMessage imageMessage = (ImageMessage) messageContent;
             Log.d(TAG, "onReceived-ImageMessage:" + imageMessage.getRemoteUri());
@@ -408,6 +411,7 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
          * demo 代码  开发者需替换成自己的代码。
          */
         if (user != null) {
+
             if (conversationType.equals(Conversation.ConversationType.PUBLIC_SERVICE) || conversationType.equals(Conversation.ConversationType.APP_PUBLIC_SERVICE)) {
                 RongIM.getInstance().startPublicServiceProfile(mContext, conversationType, user.getUserId());
             } else {
@@ -416,6 +420,7 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
                 in.putExtra("SEARCH_USERID", user.getUserId());
                 in.putExtra("SEARCH_CONVERSATIONTYPE", conversationType);
                 context.startActivity(in);
+
             }
         }
 
@@ -468,7 +473,9 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
     }
 
     @Override
-    public boolean onMessageLinkClick(String s) {
+    public boolean onMessageLinkClick(String link) {
+        Log.e(TAG, "----onMessageLongClick:" + link);
+
         return false;
     }
 
@@ -518,6 +525,7 @@ public final class RongCloudEvent implements RongIMClient.OnReceiveMessageListen
     @Override
     public boolean onConversationClick(Context context, View view, UIConversation conversation) {
         MessageContent messageContent = conversation.getMessageContent();
+
         if (messageContent instanceof TextMessage) {//文本消息
 
             TextMessage textMessage = (TextMessage) messageContent;

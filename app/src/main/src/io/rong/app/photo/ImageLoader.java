@@ -66,7 +66,6 @@ public class ImageLoader
 	/**
 	 * 队列的调度方式
 	 *
-	 * @author zhy
 	 *
 	 */
 	public enum Type

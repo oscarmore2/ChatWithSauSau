@@ -234,6 +234,13 @@ public class ChoosePictureActivity extends Activity implements ListImageDirPopup
 
                 Log.e("-----------------", path);
 
+                //预先验证图片的有效性
+                final File file = new File(path);
+                if (!file.exists()) {
+                    throw new IllegalArgumentException("Uri 文件不存在");
+                    //如果此处抛出异常 说明预见检查到无效的图片 此时 开发者把 下面 continue 放开  再把 抛出异常的代码注释即可
+//                    continue;
+                }
 
                 // 拿到第一张图片的路径
                 if (firstImage == null)

@@ -12,13 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Observable;
-import java.util.Observer;
 
 import io.rong.app.R;
 import io.rong.imkit.tools.PhotoFragment;
-import com.sea_monster.resource.Resource;
-import com.sea_monster.resource.ResourceHandler;
 
 /**
  * Created by DragonJ on 15/4/13.
@@ -34,6 +30,28 @@ public class PhotoActivity extends BaseActionBarActivity {
         setContentView(R.layout.de_ac_photo);
         initView();
         initData();
+    }
+    protected void initView() {
+        mPhotoFragment = (PhotoFragment) getSupportFragmentManager().getFragments().get(0);
+    }
+
+    protected void initData() {
+        Uri uri = getIntent().getParcelableExtra("photo");
+        Uri thumbUri = getIntent().getParcelableExtra("thumbnail");
+
+        mUri = uri;
+        if (uri != null)
+            mPhotoFragment.initPhoto(uri, thumbUri, new PhotoFragment.PhotoDownloadListener() {
+                @Override
+                public void onDownloaded(Uri uri) {
+                    mDownloaded = uri;
+                }
+
+                @Override
+                public void onDownloadError() {
+
+                }
+            });
     }
 
     @Override
@@ -98,27 +116,4 @@ public class PhotoActivity extends BaseActionBarActivity {
         }
     }
 
-    protected void initView() {
-        mPhotoFragment = (PhotoFragment) getSupportFragmentManager().getFragments().get(0);
-
-    }
-
-    protected void initData() {
-        Uri uri = getIntent().getParcelableExtra("photo");
-        Uri thumbUri = getIntent().getParcelableExtra("thumbnail");
-
-        mUri = uri;
-        if (uri != null)
-            mPhotoFragment.initPhoto(uri, thumbUri, new PhotoFragment.PhotoDownloadListener() {
-                @Override
-                public void onDownloaded(Uri uri) {
-                    mDownloaded = uri;
-                }
-
-                @Override
-                public void onDownloadError() {
-
-                }
-            });
-    }
 }

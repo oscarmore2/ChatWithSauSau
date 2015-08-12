@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="DeSwitchGroup">
+    <declare-styleable name="SwitchGroup">
         <attr name="orientation1">
             <flag name="horizontal" value="0"></flag>
             <flag name="vertical" value="1"></flag>

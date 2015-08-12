@@ -269,7 +269,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
                     if (mDialog != null)
                         mDialog.dismiss();
                     if (conversation.equals("conversation")) {
-                        Intent intent = new Intent(MainActivity.this, DemoActivity.class);
+                        Intent intent = new Intent(MainActivity.this, RongActivity.class);
                         intent.putExtra("DEMO_COVERSATION", conversation);
                         intent.putExtra("DEMO_COVERSATIONTYPE", conversationType);
                         intent.putExtra("DEMO_TARGETID", targetId);
@@ -349,7 +349,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
                         Uri uri = Uri.parse("rong://" + getApplicationInfo().packageName).buildUpon()
                                 .appendPath("conversationlist")
                                 .appendQueryParameter(Conversation.ConversationType.PRIVATE.getName(), "false") //设置私聊会话是否聚合显示
-                                .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "true")//群组
+                                .appendQueryParameter(Conversation.ConversationType.GROUP.getName(), "false")//群组
                                 .appendQueryParameter(Conversation.ConversationType.DISCUSSION.getName(), "false")//讨论组
                                 .appendQueryParameter(Conversation.ConversationType.APP_PUBLIC_SERVICE.getName(), "false")//应用公众服务。
                                 .appendQueryParameter(Conversation.ConversationType.PUBLIC_SERVICE.getName(), "false")//公共服务号
@@ -505,19 +505,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
         switch (item.getItemId()) {
             case R.id.add_item1://发起聊天
                 startActivity(new Intent(this, FriendListActivity.class));
-
-//                RongIM.getInstance().getRongIMClient().getNotificationQuietHours(new RongIMClient.GetNotificationQuietHoursCallback() {
-//                    @Override
-//                    public void onSuccess(String startTime, int spanMinutes) {
-//
-//                        Log.e(TAG,"-----onSuccess-dddd-----"+startTime);
-//                    }
-//
-//                    @Override
-//                    public void onError(RongIMClient.ErrorCode errorCode) {
-//                        Log.e(TAG,"-----onError--ddddd----"+errorCode);
-//                    }
-//                });
+//                startActivity(new Intent(this, TestActivity.class));
 
                 break;
             case R.id.add_item2://选择群组
@@ -526,7 +514,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
                     RongIM.getInstance().startSubConversationList(this, Conversation.ConversationType.GROUP);
                 break;
             case R.id.add_item3://通讯录
-                startActivity(new Intent(MainActivity.this, DeAdressListActivity.class));
+                startActivity(new Intent(MainActivity.this, ContactsActivity.class));
                 break;
             case R.id.set_item1://我的账号
                 startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
@@ -552,7 +540,7 @@ public class MainActivity extends BaseApiActivity implements View.OnClickListene
 
 
                         if (RongIM.getInstance() != null) {
-                            RongIM.getInstance().disconnect(false);
+                            RongIM.getInstance().logout();
                         }
                         Process.killProcess(Process.myPid());
                     }

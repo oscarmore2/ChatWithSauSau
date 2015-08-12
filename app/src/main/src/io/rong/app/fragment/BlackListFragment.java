@@ -21,9 +21,9 @@ import io.rong.app.R;
 import io.rong.app.adapter.BlackMultiChoiceAdapter;
 import io.rong.app.adapter.FriendListAdapter;
 import io.rong.app.model.Friend;
-import io.rong.app.ui.DePinnedHeaderListView;
-import io.rong.app.ui.DeSwitchGroup;
-import io.rong.app.ui.DeSwitchItemView;
+import io.rong.app.ui.PinnedHeaderListView;
+import io.rong.app.ui.SwitchGroup;
+import io.rong.app.ui.SwitchItemView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.UserInfo;
@@ -32,12 +32,12 @@ import io.rong.imlib.model.UserInfo;
  * Created by Bob on 2015/3/26.
  */
 @SuppressWarnings("ALL")
-public class BlackListFragment extends Fragment implements DeSwitchGroup.ItemHander, View.OnClickListener, TextWatcher, FriendListAdapter.OnFilterFinished, AdapterView.OnItemClickListener {
+public class BlackListFragment extends Fragment implements SwitchGroup.ItemHander, View.OnClickListener, TextWatcher, FriendListAdapter.OnFilterFinished, AdapterView.OnItemClickListener {
 
     private static final String TAG = BlackListFragment.class.getSimpleName();
     protected BlackMultiChoiceAdapter mAdapter;
-    private DePinnedHeaderListView mListView;
-    private DeSwitchGroup mSwitchGroup;
+    private PinnedHeaderListView mListView;
+    private SwitchGroup mSwitchGroup;
     /**
      * 好友list
      */
@@ -49,8 +49,8 @@ public class BlackListFragment extends Fragment implements DeSwitchGroup.ItemHan
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.de_list_address, null);
 
-        mListView = (DePinnedHeaderListView) view.findViewById(R.id.de_ui_friend_list);
-        mSwitchGroup = (DeSwitchGroup) view.findViewById(R.id.de_ui_friend_message);
+        mListView = (PinnedHeaderListView) view.findViewById(R.id.de_ui_friend_list);
+        mSwitchGroup = (SwitchGroup) view.findViewById(R.id.de_ui_friend_message);
 
         mListView.setPinnedHeaderView(LayoutInflater.from(this.getActivity()).inflate(R.layout.de_item_friend_index,
                 mListView, false));
@@ -117,8 +117,8 @@ public class BlackListFragment extends Fragment implements DeSwitchGroup.ItemHan
     @Override
     public void onClick(View v) {
 
-        if (v instanceof DeSwitchItemView) {
-            CharSequence tag = ((DeSwitchItemView) v).getText();
+        if (v instanceof SwitchItemView) {
+            CharSequence tag = ((SwitchItemView) v).getText();
 
             if (mAdapter != null && mAdapter.getSectionIndexer() != null) {
                 Object[] sections = mAdapter.getSectionIndexer().getSections();

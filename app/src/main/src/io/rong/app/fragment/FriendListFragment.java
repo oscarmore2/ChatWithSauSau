@@ -23,21 +23,21 @@ import io.rong.app.R;
 import io.rong.app.adapter.FriendListAdapter;
 import io.rong.app.adapter.FriendMultiChoiceAdapter;
 import io.rong.app.model.Friend;
-import io.rong.app.ui.DePinnedHeaderListView;
-import io.rong.app.ui.DeSwitchGroup;
-import io.rong.app.ui.DeSwitchItemView;
+import io.rong.app.ui.PinnedHeaderListView;
+import io.rong.app.ui.SwitchGroup;
+import io.rong.app.ui.SwitchItemView;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Discussion;
 import io.rong.imlib.model.UserInfo;
 
-public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHander, OnClickListener, TextWatcher, FriendListAdapter.OnFilterFinished, OnItemClickListener {
+public class FriendListFragment extends Fragment implements SwitchGroup.ItemHander, OnClickListener, TextWatcher, FriendListAdapter.OnFilterFinished, OnItemClickListener {
 
     private static final String TAG = FriendListFragment.class.getSimpleName();
     protected FriendListAdapter mAdapter;
-    private DePinnedHeaderListView mListView;
-    private DeSwitchGroup mSwitchGroup;
+    private PinnedHeaderListView mListView;
+    private SwitchGroup mSwitchGroup;
     private EditText mEditText;
 
     protected List<Friend> mFriendsList;
@@ -54,8 +54,8 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.de_list_friend, container, false);
 
-        mListView = (DePinnedHeaderListView) view.findViewById(R.id.de_ui_friend_list);
-        mSwitchGroup = (DeSwitchGroup) view.findViewById(R.id.de_ui_friend_message);
+        mListView = (PinnedHeaderListView) view.findViewById(R.id.de_ui_friend_list);
+        mSwitchGroup = (SwitchGroup) view.findViewById(R.id.de_ui_friend_message);
         mEditText = (EditText) view.findViewById(R.id.de_ui_search);
 
         mListView.setPinnedHeaderView(LayoutInflater.from(this.getActivity()).inflate(R.layout.de_item_friend_index,
@@ -225,8 +225,8 @@ public class FriendListFragment extends Fragment implements DeSwitchGroup.ItemHa
     @Override
     public void onClick(View v) {
 
-        if (v instanceof DeSwitchItemView) {
-            CharSequence tag = ((DeSwitchItemView) v).getText();
+        if (v instanceof SwitchItemView) {
+            CharSequence tag = ((SwitchItemView) v).getText();
 
             if (mAdapter != null && mAdapter.getSectionIndexer() != null) {
                 Object[] sections = mAdapter.getSectionIndexer().getSections();

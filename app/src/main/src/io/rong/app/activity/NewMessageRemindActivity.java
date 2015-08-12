@@ -14,6 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.sea_monster.exception.BaseException;
+import com.sea_monster.network.AbstractHttpRequest;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,8 +26,6 @@ import io.rong.app.ui.WinToast;
 import io.rong.app.utils.DateUtils;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.RongIMClient;
-import com.sea_monster.exception.BaseException;
-import com.sea_monster.network.AbstractHttpRequest;
 
 
 /**
@@ -34,6 +35,7 @@ public class NewMessageRemindActivity extends BaseApiActivity implements View.On
 
     private static final int NOTIFICATION_ISCHECKED = 1;
     private static final int NOTIFICATION_NOCHECKED = 2;
+    private static final int NOTIFICATION_NOCHECKED_BEGIN = 3;
     /**
      * 接收新消息通知
      */
@@ -137,6 +139,28 @@ public class NewMessageRemindActivity extends BaseApiActivity implements View.On
                 mHandler.sendMessage(msg);
             }
         }
+
+//        if(RongIM.getInstance()!= null &&RongIM.getInstance().getRongIMClient()!=null){
+//            RongIM.getInstance().getRongIMClient().getNotificationQuietHours(new RongIMClient.GetNotificationQuietHoursCallback() {
+//                @Override
+//                public void onSuccess(String startTime, int spanMin) {
+//                    if(startTime != null){
+//
+//                        Message msg = Message.obtain();
+//                        msg.what = NOTIFICATION_NOCHECKED_BEGIN;
+//                        msg.obj = startTime;
+//                        msg.arg1 = spanMin;
+//                        mHandler.sendMessage(msg);
+//                    }
+//
+//                }
+//
+//                @Override
+//                public void onError(RongIMClient.ErrorCode errorCode) {
+//
+//                }
+//            });
+//        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -329,6 +353,19 @@ public class NewMessageRemindActivity extends BaseApiActivity implements View.On
                 editor.remove("IS_SETTING");
                 editor.apply();
                 break;
+            case NOTIFICATION_NOCHECKED_BEGIN:
+
+                mNewMessageNotice.setChecked(true);
+                mCloseNotifacation.setVisibility(View.VISIBLE);
+
+                String startTime = (String) msg.obj;
+                int span = msg.arg1;
+
+                mStartTimeNofication.setText(startTime);
+                mEndTimeNofication.setText(span+"");
+                break;
+
+
         }
         return false;
     }

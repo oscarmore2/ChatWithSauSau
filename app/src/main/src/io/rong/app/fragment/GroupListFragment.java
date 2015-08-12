@@ -55,7 +55,6 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
     private Handler mHandler;
     private LoadingDialog mDialog;
 
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.de_fr_group_list, container, false);
@@ -116,7 +115,7 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
                         @Override
                         public boolean onButtonClick(int position, View view) {
 
-                            if(mDemoGroupListAdapter == null)
+                            if (mDemoGroupListAdapter == null)
                                 return false;
 
                             result = mDemoGroupListAdapter.getItem(position);
@@ -124,7 +123,7 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
                             if (result == null)
                                 return false;
 
-                            if(mGroupMap == null)
+                            if (mGroupMap == null)
                                 return false;
 
                             if (mGroupMap.containsKey(result.getId())) {
@@ -225,8 +224,10 @@ public class GroupListFragment extends BaseFragment implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (mResultList != null && position != -1 && position < mResultList.size()) {
 
-            Uri uri = Uri.parse("demo://" + getActivity().getApplicationInfo().packageName).buildUpon().appendPath("conversationSetting")
-                    .appendPath(String.valueOf(Conversation.ConversationType.GROUP)).appendQueryParameter("targetId", mResultList.get(position).getId()).build();
+            Uri uri = Uri.parse("demo://" + getActivity().getApplicationInfo().packageName).buildUpon()
+                    .appendPath("conversationSetting")
+                    .appendPath(String.valueOf(Conversation.ConversationType.GROUP))
+                    .appendQueryParameter("targetId", mResultList.get(position).getId()).build();
 
             Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
             intent.putExtra("INTENT_GROUP", mResultList.get(position));

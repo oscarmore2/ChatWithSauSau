@@ -4,8 +4,9 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
+import io.rong.app.message.ContactNotificationMessageProvider;
 import io.rong.app.message.DeAgreedFriendRequestMessage;
-import io.rong.app.message.DeContactNotificationMessageProvider;
+import io.rong.app.message.DemoCommandNotificationMessage;
 import io.rong.imkit.RongIM;
 import io.rong.imlib.ipc.RongExceptionHandler;
 
@@ -29,7 +30,7 @@ public class App extends Application {
          * 只有两个进程需要初始化，主进程和 push 进程
          */
         if("io.rong.app".equals(getCurProcessName(getApplicationContext())) ||
-                "io.rong.push".equals(getCurProcessName(getApplicationContext()))) {
+           "io.rong.push".equals(getCurProcessName(getApplicationContext()))) {
 
             RongIM.init(this);
 
@@ -44,9 +45,9 @@ public class App extends Application {
                 DemoContext.init(this);
                 Thread.setDefaultUncaughtExceptionHandler(new RongExceptionHandler(this));
                 try {
+                    RongIM.registerMessageType(DemoCommandNotificationMessage.class);
                     RongIM.registerMessageType(DeAgreedFriendRequestMessage.class);
-                    RongIM.registerMessageTemplate(new DeContactNotificationMessageProvider());
-//                RongIM.registerMessageTemplate(new DeAgreedFriendRequestMessageProvider());
+                    RongIM.registerMessageTemplate(new ContactNotificationMessageProvider());
 
                 } catch (Exception e) {
                     e.printStackTrace();
