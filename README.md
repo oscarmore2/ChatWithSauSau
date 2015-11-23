@@ -1,2 +1,2 @@
 # ChatWithSauSau
-This App allow you to chat with Sau Sau in text, image, location, voice.
+This App allow you to chat with Sau Sau via text, image, location, voice.
